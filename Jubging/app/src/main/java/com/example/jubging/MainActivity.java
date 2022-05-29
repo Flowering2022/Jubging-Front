@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
         mapViewContainer.addView(mapView);
         mapView.setMapViewEventListener(this);
         mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading);
-
+        mapView.setCustomCurrentLocationMarkerTrackingImage(R.drawable.user, new MapPOIItem.ImageOffset(16, 16));
 
         if (!checkLocationServicesStatus()) {
             showDialogForLocationServiceSetting();
@@ -117,13 +117,23 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
                             marker[i].setTag(i + 1);
                             marker[i].setItemName(location);
                             marker[i].setMapPoint(tempmapPoint);
-                            marker[i].setMarkerType(MapPOIItem.MarkerType.BluePin); // 기본으로 제공하는 BluePin 마커 모양.
-                            marker[i].setSelectedMarkerType(MapPOIItem.MarkerType.RedPin); // 마커를 클릭했을때, 기본으로 제공하는 RedPin 마커 모양.
+                            marker[i].setMarkerType(MapPOIItem.MarkerType.CustomImage); // 기본으로 제공하는 BluePin 마커 모양.
+                            marker[i].setCustomImageResourceId(R.drawable.markernc);
+                            marker[i].setSelectedMarkerType(MapPOIItem.MarkerType.CustomImage);// 마커를 클릭했을때, 기본으로 제공하는 RedPin 마커 모양.
+                            marker[i].setCustomSelectedImageResourceId(R.drawable.markertk);
                             mapView.addPOIItem(marker[i]);
                         }
 
-
-
+//                        if(distanceKiloMeter < 2) {
+//                            MapPoint tempmapPoint = MapPoint.mapPointWithGeoCoord(latitude, longitude);
+//                            marker[i] = new MapPOIItem();
+//                            marker[i].setTag(i + 1);
+//                            marker[i].setItemName(location);
+//                            marker[i].setMapPoint(tempmapPoint);
+//                            marker[i].setMarkerType(MapPOIItem.MarkerType.BluePin); // 기본으로 제공하는 BluePin 마커 모양.
+//                            marker[i].setSelectedMarkerType(MapPOIItem.MarkerType.RedPin); // 마커를 클릭했을때, 기본으로 제공하는 RedPin 마커 모양.
+//                            mapView.addPOIItem(marker[i]);
+//                        }
 
                     }
                 }
