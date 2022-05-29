@@ -7,30 +7,56 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.Point;
 import android.location.LocationManager;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.Toast;
 
-import net.daum.mf.map.api.MapView;
+
+import net.daum.mf.map.api.CameraUpdateFactory;
+import net.daum.mf.map.api.MapCircle;
 import net.daum.mf.map.api.MapPoint;
+import net.daum.mf.map.api.MapPointBounds;
+import net.daum.mf.map.api.MapView;
+
 import net.daum.mf.map.api.MapPOIItem;
 
-public class MainActivity extends AppCompatActivity implements MapView.CurrentLocationEventListener, MapView.MapViewEventListener{
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+
+public class MainActivity extends AppCompatActivity implements MapView.CurrentLocationEventListener, MapView.MapViewEventListener, MapView.POIItemEventListener
+{
     private static final String LOG_TAG = "MainActivity";
     private MapView mapView;
     private ViewGroup mapViewContainer;
     private static final int GPS_ENABLE_REQUEST_CODE = 2001;
     private static final int PERMISSIONS_REQUEST_CODE = 100;
     String[] REQUIRED_PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION};
-
+    MapPOIItem[] marker;
+    Double current_latitude;
+    Double current_longitude;
+    JSONArray jsonArray;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,34 +71,174 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
         mapView.setMapViewEventListener(this);
         mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading);
 
+
         if (!checkLocationServicesStatus()) {
             showDialogForLocationServiceSetting();
         } else {
             checkRunTimePermission();
         }
 
-        View.OnClickListener listener = new View.OnClickListener(){
+        View.OnClickListener listener = new View.OnClickListener() {
 
-            public void onClick(View v){
+            public void onClick(View v) {
                 mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading);
             }
         };
 
-        Button btn = (Button)findViewById(R.id.trc);
+        Button btn = (Button) findViewById(R.id.trc);
         btn.setOnClickListener(listener);
 
-        MapPOIItem marker = new MapPOIItem();
+        Button button = (Button)findViewById(R.id.location_Btn);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
 
-        MapPoint mapPoint = MapPoint.mapPointWithGeoCoord(33.440828, 126.556849);
-        marker.setItemName("산천단 길");
-        marker.setTag(0);
-        marker.setMapPoint(mapPoint);
-        marker.setMarkerType(MapPOIItem.MarkerType.BluePin); // 기본으로 제공하는 BluePin 마커 모양.
-        marker.setSelectedMarkerType(MapPOIItem.MarkerType.RedPin); // 마커를 클릭했을때, 기본으로 제공하는 RedPin 마커 모양.
+                    mapView.removeAllPOIItems();
+                    for (int i = 0; i < 1500; i++) {
+                        JSONObject obj = jsonArray.getJSONObject(i);
 
-        mapView.addPOIItem(marker);
+                        //위도 추출
+                        Double latitude = Double.parseDouble(obj.getString("latitude"));
+
+                        //경도 추출
+                        Double longitude = Double.parseDouble(obj.getString("longitude"));
+
+                        //클린하우스 이름 추출
+                        String location = obj.getString("location");
+
+                        double distanceKiloMeter =
+                                distance(latitude, longitude, current_latitude, current_longitude, "kilometer");
+
+
+                        if(distanceKiloMeter < 2) {
+                            MapPoint tempmapPoint = MapPoint.mapPointWithGeoCoord(latitude, longitude);
+                            marker[i] = new MapPOIItem();
+                            marker[i].setTag(i + 1);
+                            marker[i].setItemName(location);
+                            marker[i].setMapPoint(tempmapPoint);
+                            marker[i].setMarkerType(MapPOIItem.MarkerType.BluePin); // 기본으로 제공하는 BluePin 마커 모양.
+                            marker[i].setSelectedMarkerType(MapPOIItem.MarkerType.RedPin); // 마커를 클릭했을때, 기본으로 제공하는 RedPin 마커 모양.
+                            mapView.addPOIItem(marker[i]);
+                        }
+
+
+
+
+                    }
+                }
+                catch (JSONException e){
+
+                }
+            }
+        });
+
+
+
+        //Json 파싱
+        StringBuilder urlBuilder = new StringBuilder("https://gist.githubusercontent.com/Yummy-sk/162dd1e4349ebf821f43db6c3c67f744/raw/ed25686c4f36e2b1474a8eeab2fa52837bdb5d93/jeju_clean_house"); /*URL*/
+
+
+        // 3. URL 객체 생성.
+        new Thread(() -> {
+            URL url = null;
+            HttpURLConnection conn = null;
+            BufferedReader rd = null;
+            try {
+                url = new URL(urlBuilder.toString());
+                // 4. 요청하고자 하는 URL과 통신하기 위한 Connection 객체 생성.
+                conn = (HttpURLConnection) url.openConnection();
+                // 5. 통신을 위한 메소드 SET.
+                conn.setRequestMethod("GET");
+                // 6. 통신을 위한 Content-type SET.
+                conn.setRequestProperty("Content-type", "application/json");
+                // 7. 통신 응답 코드 확인.
+                System.out.println("Response code: " + conn.getResponseCode());
+                // 8. 전달받은 데이터를 BufferedReader 객체로 저장.
+
+                if (conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300) {
+                    rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                } else {
+                    rd = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+                }
+                // 9. 저장된 데이터를 라인별로 읽어 StringBuilder 객체로 저장.
+                StringBuilder sb = new StringBuilder();
+                String line;
+                while ((line = rd.readLine()) != null) {
+                    sb.append(line);
+                }
+
+                // 11. 전달받은 데이터 확인.
+//                System.out.println(sb.toString());
+
+                String data = sb.toString();
+//                System.out.println(data);
+                jsonArray = new JSONArray(data);
+
+                marker = new MapPOIItem[jsonArray.length()];
+                // jsonArray.length()
+
+
+//                mapView.addPOIItems(marker);
+                mapView.setPOIItemEventListener(this);
+
+
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } finally {
+                // 10. 객체 해제.
+
+                if (rd != null) {
+                    try {
+                        rd.close();
+                    } catch (IOException e) {
+
+                    }
+                }
+
+                if (conn != null) {
+                    conn.disconnect();
+                }
+            }
+        }).start();
+
 
     }
+
+    private static double distance(double lat1, double lon1, double lat2, double lon2, String unit) {
+
+        double theta = lon1 - lon2;
+        double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
+
+        dist = Math.acos(dist);
+        dist = rad2deg(dist);
+        dist = dist * 60 * 1.1515;
+
+        if (unit == "kilometer") {
+            dist = dist * 1.609344;
+        } else if(unit == "meter"){
+            dist = dist * 1609.344;
+        }
+
+        return (dist);
+    }
+
+
+    // This function converts decimal degrees to radians
+    private static double deg2rad(double deg) {
+        return (deg * Math.PI / 180.0);
+    }
+
+    // This function converts radians to decimal degrees
+    private static double rad2deg(double rad) {
+        return (rad * 180 / Math.PI);
+    }
+
 
     @Override
     protected void onDestroy() {
@@ -85,6 +251,7 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
         MapPoint.GeoCoordinate mapPointGeo = currentLocation.getMapPointGeoCoord();
         Log.i(LOG_TAG, String.format("MapView onCurrentLocationUpdate (%f,%f) accuracy (%f)", mapPointGeo.latitude, mapPointGeo.longitude, accuracyInMeters));
     }
+
     @Override
     public void onCurrentLocationDeviceHeadingUpdate(MapView mapView, float v) {
     }
@@ -138,14 +305,14 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
         }
     }
 
-    void checkRunTimePermission(){
+    void checkRunTimePermission() {
 
         //런타임 퍼미션 처리
         // 1. 위치 퍼미션을 가지고 있는지 체크합니다.
         int hasFineLocationPermission = ContextCompat.checkSelfPermission(MainActivity.this,
                 Manifest.permission.ACCESS_FINE_LOCATION);
 
-        if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED ) {
+        if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED) {
             // 2. 이미 퍼미션을 가지고 있다면
             // ( 안드로이드 6.0 이하 버전은 런타임 퍼미션이 필요없기 때문에 이미 허용된 걸로 인식합니다.)
             // 3.  위치 값을 가져올 수 있음
@@ -219,7 +386,7 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
 
     @Override
     public void onMapViewInitialized(MapView mapView) {
-
+        Log.d("TAG", "onMapViewInitialized: " + mapView.getPOIItems().length);
     }
 
     @Override
@@ -234,7 +401,7 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
 
     @Override
     public void onMapViewSingleTapped(MapView mapView, MapPoint mapPoint) {
-
+        Log.d("TAG", "onMapViewSingleTapped: " + mapView.getPOIItems().length);
     }
 
     @Override
@@ -249,7 +416,17 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
 
     @Override
     public void onMapViewDragStarted(MapView mapView, MapPoint mapPoint) {
+        Log.d("TAG", "onMapViewDragStarted: ");
         mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeadingWithoutMapMoving);
+
+        current_latitude = mapView.getMapCenterPoint().getMapPointGeoCoord().latitude;
+        current_longitude = mapView.getMapCenterPoint().getMapPointGeoCoord().longitude;
+
+
+
+
+
+
     }
 
     @Override
@@ -261,4 +438,29 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
     public void onMapViewMoveFinished(MapView mapView, MapPoint mapPoint) {
 
     }
+
+    MapPOIItem temp = null;
+
+    @Override
+    public void onPOIItemSelected(MapView mapView, MapPOIItem mapPOIItem) {
+        if (mapView != null && mapPOIItem != null) {
+            Log.d("TAG", "onPOIItemSelected: " + mapPOIItem.getItemName() + " " + mapView.isSelected());
+        }
+    }
+
+    @Override
+    public void onCalloutBalloonOfPOIItemTouched(MapView mapView, MapPOIItem mapPOIItem) {
+
+    }
+
+    @Override
+    public void onCalloutBalloonOfPOIItemTouched(MapView mapView, MapPOIItem mapPOIItem, MapPOIItem.CalloutBalloonButtonType calloutBalloonButtonType) {
+        // 말풍선 클릭
+    }
+
+    @Override
+    public void onDraggablePOIItemMoved(MapView mapView, MapPOIItem mapPOIItem, MapPoint mapPoint) {
+
+    }
 }
+
