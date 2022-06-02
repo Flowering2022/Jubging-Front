@@ -6,4 +6,21 @@
     android:layout_height="match_parent"
     tools:context=".PasingActivity2">
 
+    <ToggleButton
+        android:id="@+id/trc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textOff="내1위치로"
+        android:textOn="내위치로"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/location_Btn"
+        android:layout_width="79dp"
+        android:layout_height="62dp"
+        android:src="@drawable/trash"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/trc" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
