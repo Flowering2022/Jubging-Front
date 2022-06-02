@@ -13,6 +13,8 @@ import android.location.LocationManager;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatImageButton;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,6 +24,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 
@@ -88,14 +92,15 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
         Button btn = (Button) findViewById(R.id.trc);
         btn.setOnClickListener(listener);
 
-        Button button = (Button)findViewById(R.id.location_Btn);
+        ImageButton button = (ImageButton) findViewById(R.id.location_Btn);
+        button.bringToFront();
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 try {
 
                     mapView.removeAllPOIItems();
-                    for (int i = 0; i < 1500; i++) {
+                    for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject obj = jsonArray.getJSONObject(i);
 
                         //위도 추출
@@ -111,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
                                 distance(latitude, longitude, current_latitude, current_longitude, "kilometer");
 
 
-                        if(distanceKiloMeter < 2) {
+                        if(distanceKiloMeter < 3) {
                             MapPoint tempmapPoint = MapPoint.mapPointWithGeoCoord(latitude, longitude);
                             marker[i] = new MapPOIItem();
                             marker[i].setTag(i + 1);
