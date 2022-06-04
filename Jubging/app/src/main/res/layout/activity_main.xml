@@ -37,5 +37,48 @@
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+
+        <SlidingDrawer
+            android:id="@+id/slidingdrawer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:content="@+id/content"
+            android:handle="@+id/handle"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/handle"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="운동기록보기" />
+
+            <LinearLayout
+                android:id="@+id/content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#ffffff"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="이것은 슬라이딩드로어 입니다." />
+
+                <ToggleButton
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"></ToggleButton>
+                <!--                    android:layout_above="@id/slidingdrawer"-->
+                <!--                    android:gravity="bottom"> -->
+
+
+            </LinearLayout>
+        </SlidingDrawer>
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
