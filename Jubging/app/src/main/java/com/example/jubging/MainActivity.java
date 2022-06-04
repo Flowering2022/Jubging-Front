@@ -1,15 +1,21 @@
 package com.example.jubging;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -48,6 +54,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MapView.CurrentLocationEventListener, MapView.MapViewEventListener, MapView.POIItemEventListener
 {
@@ -61,12 +68,17 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
     Double current_latitude;
     Double current_longitude;
     JSONArray jsonArray;
+    private PermissionSupport permission;
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+
+        permissionCheck();
+
         //지도를 띄우자
         // java code
         mapView = new MapView(this);
@@ -82,15 +94,14 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
             checkRunTimePermission();
         }
 
-        View.OnClickListener listener = new View.OnClickListener() {
-
-            public void onClick(View v) {
+        ImageButton btn = (ImageButton) findViewById(R.id.trc);
+        btn.bringToFront();
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading);
             }
-        };
-
-        Button btn = (Button) findViewById(R.id.trc);
-        btn.setOnClickListener(listener);
+        });
 
         ImageButton button = (ImageButton) findViewById(R.id.location_Btn);
         button.bringToFront();
@@ -116,6 +127,7 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
                                 distance(latitude, longitude, current_latitude, current_longitude, "kilometer");
 
 
+                        // 현재 위치에서 부터 3km거리 안에 있는 마커만 표시하기
                         if(distanceKiloMeter < 3) {
                             MapPoint tempmapPoint = MapPoint.mapPointWithGeoCoord(latitude, longitude);
                             marker[i] = new MapPOIItem();
@@ -129,16 +141,6 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
                             mapView.addPOIItem(marker[i]);
                         }
 
-//                        if(distanceKiloMeter < 2) {
-//                            MapPoint tempmapPoint = MapPoint.mapPointWithGeoCoord(latitude, longitude);
-//                            marker[i] = new MapPOIItem();
-//                            marker[i].setTag(i + 1);
-//                            marker[i].setItemName(location);
-//                            marker[i].setMapPoint(tempmapPoint);
-//                            marker[i].setMarkerType(MapPOIItem.MarkerType.BluePin); // 기본으로 제공하는 BluePin 마커 모양.
-//                            marker[i].setSelectedMarkerType(MapPOIItem.MarkerType.RedPin); // 마커를 클릭했을때, 기본으로 제공하는 RedPin 마커 모양.
-//                            mapView.addPOIItem(marker[i]);
-//                        }
 
                     }
                 }
@@ -225,6 +227,31 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
 
     }
 
+    private void permissionCheck() {
+
+        // PermissionSupport.java 클래스 객체 생성
+        permission = new PermissionSupport(this, this);
+
+        // 권한 체크 후 리턴이 false로 들어오면
+        if (!permission.checkPermission()){
+            //권한 요청
+            permission.requestPermission();
+        }
+    }
+
+    // Request Permission에 대한 결과 값 받아와
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        //여기서도 리턴이 false로 들어온다면 (사용자가 권한 허용 거부)
+        if (!permission.permissionResult(requestCode, permissions, grantResults)) {
+            // 다시 permission 요청
+            permission.requestPermission();
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+
+    // 거리 구하기 (점과 점 사이의 거리)
     private static double distance(double lat1, double lon1, double lat2, double lon2, String unit) {
 
         double theta = lon1 - lon2;
@@ -284,41 +311,6 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
 //        Toast.makeText(LocationDemoActivity.this, "Reverse Geo-coding : " + result, Toast.LENGTH_SHORT).show();
     }
 
-    // ActivityCompat.requestPermissions를 사용한 퍼미션 요청의 결과를 리턴받는 메소드
-    @Override
-    public void onRequestPermissionsResult(int permsRequestCode,
-                                           @NonNull String[] permissions,
-                                           @NonNull int[] grandResults) {
-
-        super.onRequestPermissionsResult(permsRequestCode, permissions, grandResults);
-        if (permsRequestCode == PERMISSIONS_REQUEST_CODE && grandResults.length == REQUIRED_PERMISSIONS.length) {
-
-            // 요청 코드가 PERMISSIONS_REQUEST_CODE 이고, 요청한 퍼미션 개수만큼 수신되었다면
-            boolean check_result = true;
-
-            // 모든 퍼미션을 허용했는지 체크합니다.
-            for (int result : grandResults) {
-                if (result != PackageManager.PERMISSION_GRANTED) {
-                    check_result = false;
-                    break;
-                }
-            }
-
-            if (check_result) {
-                Log.d("@@@", "start");
-                //위치 값을 가져올 수 있음
-
-            } else {
-                // 거부한 퍼미션이 있다면 앱을 사용할 수 없는 이유를 설명해주고 앱을 종료합니다.2 가지 경우가 있다
-                if (ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_PERMISSIONS[0])) {
-                    Toast.makeText(MainActivity.this, "퍼미션이 거부되었습니다. 앱을 다시 실행하여 퍼미션을 허용해주세요.", Toast.LENGTH_LONG).show();
-                    finish();
-                } else {
-                    Toast.makeText(MainActivity.this, "퍼미션이 거부되었습니다. 설정(앱 정보)에서 퍼미션을 허용해야 합니다. ", Toast.LENGTH_LONG).show();
-                }
-            }
-        }
-    }
 
     void checkRunTimePermission() {
 
@@ -429,6 +421,8 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
 
     }
 
+
+    //지도를 드래그 했을 때 이벤트
     @Override
     public void onMapViewDragStarted(MapView mapView, MapPoint mapPoint) {
         Log.d("TAG", "onMapViewDragStarted: ");
@@ -436,11 +430,6 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
 
         current_latitude = mapView.getMapCenterPoint().getMapPointGeoCoord().latitude;
         current_longitude = mapView.getMapCenterPoint().getMapPointGeoCoord().longitude;
-
-
-
-
-
 
     }
 
@@ -475,6 +464,71 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
 
     @Override
     public void onDraggablePOIItemMoved(MapView mapView, MapPOIItem mapPOIItem, MapPoint mapPoint) {
+
+    }
+
+    public class PermissionSupport {
+
+        private Context context;
+        private Activity activity;
+
+        //요청할 권한 배열 저장
+        private String[] permissions = {
+                Manifest.permission.BLUETOOTH,
+                Manifest.permission.BLUETOOTH_ADMIN,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.READ_PHONE_STATE,
+                Manifest.permission.ACCESS_FINE_LOCATION
+
+        };
+        private List permissionList;
+
+        //권한 요청시 발생하는 창에 대한 결과값을 받기 위해 지정해주는 int 형
+        //원하는 임의의 숫자 지정
+        private final int MULTIPLE_PERMISSIONS = 1023; //요청에 대한 결과값 확인을 위해 RequestCode를 final로 정의
+
+        //생성자에서 Activity와 Context를 파라미터로 받아
+        public PermissionSupport(Activity _activity, Context _context){
+            this.activity = _activity;
+            this.context = _context;
+        }
+
+        //배열로 선언한 권한 중 허용되지 않은 권한 있는지 체크
+        public boolean checkPermission() {
+            int result;
+            permissionList = new ArrayList<>();
+
+            for(String pm : permissions){
+                result = ContextCompat.checkSelfPermission(context, pm);
+                if(result != PackageManager.PERMISSION_GRANTED){
+                    permissionList.add(pm);
+                }
+            }
+            if(!permissionList.isEmpty()){
+                return false;
+            }
+            return true;
+        }
+
+        //배열로 선언한 권한에 대해 사용자에게 허용 요청
+        public void requestPermission(){
+            ActivityCompat.requestPermissions(activity, (String[]) permissionList.toArray(new String[permissionList.size()]), MULTIPLE_PERMISSIONS);
+        }
+
+        //요청한 권한에 대한 결과값 판단 및 처리
+        public boolean permissionResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
+            //우선 requestCode가 아까 위에 final로 선언하였던 숫자와 맞는지, 결과값의 길이가 0보다는 큰지 먼저 체크
+            if(requestCode == MULTIPLE_PERMISSIONS && (grantResults.length >0)) {
+                for(int i=0; i< grantResults.length; i++){
+                    //grantResults 가 0이면 사용자가 허용한 것 / -1이면 거부한 것
+                    //-1이 있는지 체크하여 하나라도 -1이 나온다면 false를 리턴
+                    if(grantResults[i] == -1){
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
 
     }
 }
