@@ -26,15 +26,19 @@ import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 
+import net.daum.mf.map.api.CalloutBalloonAdapter;
 import net.daum.mf.map.api.CameraUpdateFactory;
 import net.daum.mf.map.api.MapCircle;
 import net.daum.mf.map.api.MapPoint;
@@ -69,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
     Double current_longitude;
     JSONArray jsonArray;
     private PermissionSupport permission;
+    public static final int activity_ballomon_layout =1300002;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -78,6 +83,8 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
         setContentView(R.layout.activity_main);
 
         permissionCheck();
+
+
 
         //지도를 띄우자
         // java code
@@ -94,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
             checkRunTimePermission();
         }
 
-        ImageButton btn = (ImageButton) findViewById(R.id.trc);
+        final ImageButton btn = (ImageButton) findViewById(R.id.trc);
         btn.bringToFront();
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
             }
         });
 
-        ImageButton button = (ImageButton) findViewById(R.id.location_Btn);
+        final ImageButton button = (ImageButton) findViewById(R.id.location_Btn);
         button.bringToFront();
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -149,6 +156,19 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
                 }
             }
         });
+
+
+//        final ToggleButton plogging_tb = (ToggleButton)this.findViewById(R.id.plogging_btn);
+//        plogging_tb.setOnClickListener(new View.OnClickListener(){
+//            @Override
+//            public void onClick(View view) {
+//                if(plogging_tb.isChecked()){
+//                    plogging_tb.setBackgroundDrawable(getResources().getDrawable(R.drawable.start));
+//                }else{
+//                    plogging_tb.setBackgroundDrawable(getResources().getDrawable(R.drawable.pause));
+//                }
+//            }
+//        });
 
 
 
@@ -393,7 +413,6 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
 
     @Override
     public void onMapViewInitialized(MapView mapView) {
-        Log.d("TAG", "onMapViewInitialized: " + mapView.getPOIItems().length);
     }
 
     @Override
@@ -408,7 +427,6 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
 
     @Override
     public void onMapViewSingleTapped(MapView mapView, MapPoint mapPoint) {
-        Log.d("TAG", "onMapViewSingleTapped: " + mapView.getPOIItems().length);
     }
 
     @Override
@@ -425,7 +443,6 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
     //지도를 드래그 했을 때 이벤트
     @Override
     public void onMapViewDragStarted(MapView mapView, MapPoint mapPoint) {
-        Log.d("TAG", "onMapViewDragStarted: ");
         mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeadingWithoutMapMoving);
 
         current_latitude = mapView.getMapCenterPoint().getMapPointGeoCoord().latitude;
@@ -443,13 +460,9 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
 
     }
 
-    MapPOIItem temp = null;
 
     @Override
     public void onPOIItemSelected(MapView mapView, MapPOIItem mapPOIItem) {
-        if (mapView != null && mapPOIItem != null) {
-            Log.d("TAG", "onPOIItemSelected: " + mapPOIItem.getItemName() + " " + mapView.isSelected());
-        }
     }
 
     @Override
@@ -531,5 +544,6 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
         }
 
     }
+
 }
 

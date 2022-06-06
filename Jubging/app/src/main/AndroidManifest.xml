@@ -9,19 +9,20 @@
 
     <application
         android:allowBackup="true"
+        android:hardwareAccelerated="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Jubging"
-        android:largeHeap="true"
-        android:hardwareAccelerated="false"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".balloon_layout"
+            android:exported="false" />
+        <activity
             android:name=".PasingActivity2"
-            android:exported="true">
-
-        </activity>
+            android:exported="true"></activity>
         <activity
             android:name=".MainActivity"
             android:exported="true">
