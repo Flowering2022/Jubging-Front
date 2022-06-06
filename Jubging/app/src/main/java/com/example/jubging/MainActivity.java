@@ -73,7 +73,6 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
     Double current_longitude;
     JSONArray jsonArray;
     private PermissionSupport permission;
-    public static final int activity_ballomon_layout =1300002;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
