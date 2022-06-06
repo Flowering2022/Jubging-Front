@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,10 +37,20 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationAvailability;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.CancellationTokenSource;
+import com.google.android.gms.tasks.OnSuccessListener;
+
 import net.daum.mf.map.api.CameraUpdateFactory;
 import net.daum.mf.map.api.MapCircle;
 import net.daum.mf.map.api.MapPoint;
 import net.daum.mf.map.api.MapPointBounds;
+import net.daum.mf.map.api.MapPolyline;
 import net.daum.mf.map.api.MapView;
 
 import net.daum.mf.map.api.MapPOIItem;
@@ -56,9 +68,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements MapView.CurrentLocationEventListener, MapView.MapViewEventListener, MapView.POIItemEventListener
-{
+public class MainActivity extends AppCompatActivity implements MapView.CurrentLocationEventListener, MapView.MapViewEventListener, MapView.POIItemEventListener {
     private static final String LOG_TAG = "MainActivity";
+    private static final int PRIORITY_HIGH_ACCURACY = LocationRequest.PRIORITY_HIGH_ACCURACY;
     private MapView mapView;
     private ViewGroup mapViewContainer;
     private static final int GPS_ENABLE_REQUEST_CODE = 2001;
@@ -69,6 +81,10 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
     Double current_longitude;
     JSONArray jsonArray;
     private PermissionSupport permission;
+    private FusedLocationProviderClient fusedLocationClient;
+    private LocationCallback mLocationCallback;
+    private  double mLatitude;
+    private double mLongitude;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -128,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
 
 
                         // 현재 위치에서 부터 3km거리 안에 있는 마커만 표시하기
-                        if(distanceKiloMeter < 3) {
+                        if (distanceKiloMeter < 3) {
                             MapPoint tempmapPoint = MapPoint.mapPointWithGeoCoord(latitude, longitude);
                             marker[i] = new MapPOIItem();
                             marker[i].setTag(i + 1);
@@ -143,13 +159,11 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
 
 
                     }
-                }
-                catch (JSONException e){
+                } catch (JSONException e) {
 
                 }
             }
         });
-
 
 
         //Json 파싱
@@ -200,7 +214,6 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
                 mapView.setPOIItemEventListener(this);
 
 
-
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -223,9 +236,52 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
                 }
             }
         }).start();
+        MapPolyline polyline = new MapPolyline();
+        polyline.setTag(1000);
+        polyline.setLineColor(Color.argb(128, 255, 51, 0)); // Polyline 컬러 지정.
+        // Polyline 지도에 올리기.
+        mapView.addPolyline(polyline);
 
+        CancellationTokenSource cts = new CancellationTokenSource();
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        fusedLocationClient.getCurrentLocation(PRIORITY_HIGH_ACCURACY, cts.getToken()).addOnSuccessListener(this, new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                // Got last known location. In some rare situations this can be null.
+                if (location != null) {
+                    Log.d("구글지도", "onSuccess위도: " + location.getLatitude());
+                    Log.d("구글지도", "onSuccess경도: " + location.getLongitude());
+                    polyline.addPoint(MapPoint.mapPointWithGeoCoord(location.getLatitude(), location.getLongitude()));
+                }
+            }
+        });
+        LocationRequest locationRequest = new LocationRequest();
+        locationRequest.setFastestInterval(1000*60);
+        locationRequest.setInterval(1000*60);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                if (locationResult == null) {
+                    return;
+                }
+                Location location = locationResult.getLastLocation();
+                mLatitude=location.getLatitude();
+                mLongitude=location.getLongitude();
+                Log.d("구글", "onLocationResult 위도: "+mLatitude);
+                Log.d("구글", "onLocationResult 경도: "+mLongitude);
+                // Log.d("구글", "onLocationResult: "+location.);
+                // Polyline 좌표 지정.
+                polyline.addPoint(MapPoint.mapPointWithGeoCoord(mLatitude, mLongitude));
+                mapView.addPolyline(polyline);
+            }
+        };
+
+
+        //fusedLocationClient.requestLocationUpdates(locationRequest, mLocationCallback, Looper.myLooper());
 
     }
+
 
     private void permissionCheck() {
 
@@ -233,7 +289,7 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
         permission = new PermissionSupport(this, this);
 
         // 권한 체크 후 리턴이 false로 들어오면
-        if (!permission.checkPermission()){
+        if (!permission.checkPermission()) {
             //권한 요청
             permission.requestPermission();
         }
@@ -263,7 +319,7 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
 
         if (unit == "kilometer") {
             dist = dist * 1.609344;
-        } else if(unit == "meter"){
+        } else if (unit == "meter") {
             dist = dist * 1609.344;
         }
 
@@ -281,7 +337,33 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
         return (rad * 180 / Math.PI);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
 
+        startLocationUpdates();
+
+    }
+
+    private void startLocationUpdates() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        LocationRequest locationRequest = new LocationRequest();
+        locationRequest.setFastestInterval(5000);
+        locationRequest.setInterval(10000);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        fusedLocationClient.requestLocationUpdates(locationRequest,
+                mLocationCallback,
+                Looper.getMainLooper());
+    }
     @Override
     protected void onDestroy() {
         super.onDestroy();
