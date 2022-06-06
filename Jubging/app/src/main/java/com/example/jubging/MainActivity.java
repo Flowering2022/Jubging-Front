@@ -70,6 +70,9 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
     JSONArray jsonArray;
     private PermissionSupport permission;
 
+    private Button btn_finish, btn_count, pause;
+    private int count = 0;
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +105,68 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
                 mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading);
             }
         });
+
+        //btn_count
+        btn_count = findViewById(R.id.btn_count);
+        btn_count.setText(count+"");
+        btn_finish = findViewById(R.id.btn_finish);
+        btn_finish.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                while (count >= 0) {
+//                    count++;
+//                    btn_count.setText(count + "");
+//                }
+                @Override
+                public void onClick(View v) {
+                    if (count == 0){
+                        count++;
+                    }
+                    else {
+                        btn_count.setText(count + "");
+                        count++;
+                    }
+
+//                if (count %2 == 1) {
+//                    btn_count.setText(count + "");//1 //3
+//                    count++;//2 //4
+//                }
+
+//               if (count ==0){
+//                    count++; //1
+//                } else if (count == 1) {
+//                    btn_count.setText(count + ""); //1
+//                    count++; //2
+//                }
+//                else if(count==2){
+//                    count++; //3
+//                }
+//                else if (count == 3) {
+//                    count-=1; //2
+//                    btn_count.setText(count + ""); //2
+//                    count += 2; //4
+//                }
+//                else if (count ==4){
+//                    count++; //5
+//                }
+//                else if (count ==5){
+//                   count-=2; //3
+//                   btn_count.setText(count + ""); //3
+//                   count += 3; //6
+//               }
+//               else if (count ==6){
+//                   count++; //7
+//               }
+//               else if (count ==7){
+//                   count-=3; //4
+//                   btn_count.setText(count + ""); //4
+//                   count += 4; //8
+//               }
+
+            }
+        });
+
+
 
         ImageButton button = (ImageButton) findViewById(R.id.location_Btn);
         button.bringToFront();
