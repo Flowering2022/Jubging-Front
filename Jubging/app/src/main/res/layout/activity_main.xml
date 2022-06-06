@@ -174,43 +174,53 @@
                     android:layout_height="0dp"
                     android:orientation="horizontal"
                     android:layout_weight="2">
-                    <Button
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+                    <TextView
                         android:id="@+id/btn_count"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:layout_marginRight="20dp"
-                        android:layout_marginLeft="25dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="4"
+                        android:gravity="center"
+                        android:textSize="20sp"
                         android:text="플로깅 총 횟수"/>
-                    <Button
+<!--                    android:layout_marginRight="20dp"-->
+<!--                    android:layout_marginLeft="25dp"-->
+                        <TextView
+                            android:id="@+id/btn_count_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="플로깅 총 횟수"/>
+                    </LinearLayout>
+                    <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:layout_marginRight="25dp"
-                        android:layout_marginLeft="20dp"
-                        android:text="총 거리"/>
-                </LinearLayout>
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="4"
+                            android:gravity="center"
+                            android:textSize="20sp"
+                            android:text="총 거리"/>
+                        <TextView
+                            android:id="@+id/btn_count_text_distance"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="총거리"/>
 
-                <LinearLayout
-                    android:id="@+id/btn_text_2"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:orientation="horizontal"
-                    android:layout_weight="0.5">
-                    <TextView
-                        android:id="@+id/btn_count_text"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:text="플로깅 총 횟수"/>
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:text="총 거리"/>
+                    </LinearLayout>
+
                 </LinearLayout>
+                
 
                 <LinearLayout
                     android:layout_width="match_parent"

@@ -32,6 +32,7 @@ import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -70,7 +71,8 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
     JSONArray jsonArray;
     private PermissionSupport permission;
 
-    private Button btn_finish, btn_count, pause;
+    private Button btn_finish, pause;
+    private TextView btn_count;
     private int count = 0;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
