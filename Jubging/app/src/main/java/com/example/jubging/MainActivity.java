@@ -77,6 +77,8 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
     private static final int PERMISSIONS_REQUEST_CODE = 100;
     String[] REQUIRED_PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION};
     MapPOIItem[] marker;
+    MapPOIItem trackingMarker;
+    MapPolyline kaoPolyline;
     Double current_latitude;
     Double current_longitude;
     JSONArray jsonArray;
@@ -85,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
     private LocationCallback mLocationCallback;
     private  double mLatitude;
     private double mLongitude;
+    private  double totalDistance=0;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -102,8 +105,8 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
         mapViewContainer.addView(mapView);
         mapView.setMapViewEventListener(this);
         mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading);
-        mapView.setCustomCurrentLocationMarkerTrackingImage(R.drawable.user, new MapPOIItem.ImageOffset(16, 16));
-
+        mapView.setCustomCurrentLocationMarkerTrackingImage(R.drawable.abcde, new MapPOIItem.ImageOffset(16, 16));
+        trackingMarker= new MapPOIItem();
         if (!checkLocationServicesStatus()) {
             showDialogForLocationServiceSetting();
         } else {
@@ -238,12 +241,25 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
         }).start();
         MapPolyline polyline = new MapPolyline();
         polyline.setTag(1000);
-        polyline.setLineColor(Color.argb(128, 255, 51, 0)); // Polyline 컬러 지정.
+        polyline.setLineColor(Color.argb(255, 255, 51, 0)); // Polyline 컬러 지정.
+        kaoPolyline=new MapPolyline();
+
+        kaoPolyline.setLineColor(Color.argb(255, 255, 255, 255));
         // Polyline 지도에 올리기.
         mapView.addPolyline(polyline);
-
+        mapView.addPolyline(kaoPolyline);
         CancellationTokenSource cts = new CancellationTokenSource();
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        fusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        // Got last known location. In some rare situations this can be null.
+                        if (location != null) {
+                            // Logic to handle location object
+                        }
+                    }
+                });
         fusedLocationClient.getCurrentLocation(PRIORITY_HIGH_ACCURACY, cts.getToken()).addOnSuccessListener(this, new OnSuccessListener<Location>() {
             @Override
             public void onSuccess(Location location) {
@@ -251,7 +267,7 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
                 if (location != null) {
                     Log.d("구글지도", "onSuccess위도: " + location.getLatitude());
                     Log.d("구글지도", "onSuccess경도: " + location.getLongitude());
-                    polyline.addPoint(MapPoint.mapPointWithGeoCoord(location.getLatitude(), location.getLongitude()));
+                    //polyline.addPoint(MapPoint.mapPointWithGeoCoord(location.getLatitude(), location.getLongitude()));
                 }
             }
         });
@@ -266,18 +282,29 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
                     return;
                 }
                 Location location = locationResult.getLastLocation();
+                if(mLatitude != 0 && mLongitude != 0){
+                    totalDistance+= distance(mLatitude,mLongitude,location.getLatitude(),location.getLongitude(),"meter");
+                }
                 mLatitude=location.getLatitude();
                 mLongitude=location.getLongitude();
                 Log.d("구글", "onLocationResult 위도: "+mLatitude);
                 Log.d("구글", "onLocationResult 경도: "+mLongitude);
+                Log.d("구글", "onLocationResult 거리: "+totalDistance);
                 // Log.d("구글", "onLocationResult: "+location.);
+                mapView.removePOIItem(trackingMarker);
+                trackingMarker.setItemName("trackinMarker");
+                trackingMarker.setTag(0);
+                trackingMarker.setMapPoint(MapPoint.mapPointWithGeoCoord(mLatitude,mLongitude));
+                trackingMarker.setMarkerType(MapPOIItem.MarkerType.CustomImage);// 마커타입을 커스텀 마커로 지정.
+                trackingMarker.setCustomImageResourceId(R.drawable.abcde); // 마커 이미지.
+                mapView.addPOIItem(trackingMarker);
                 // Polyline 좌표 지정.
                 polyline.addPoint(MapPoint.mapPointWithGeoCoord(mLatitude, mLongitude));
                 mapView.addPolyline(polyline);
             }
         };
 
-
+        mapView.addPolyline(kaoPolyline);
         //fusedLocationClient.requestLocationUpdates(locationRequest, mLocationCallback, Looper.myLooper());
 
     }
@@ -357,7 +384,7 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
             return;
         }
         LocationRequest locationRequest = new LocationRequest();
-        locationRequest.setFastestInterval(5000);
+        locationRequest.setFastestInterval(10000);
         locationRequest.setInterval(10000);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         fusedLocationClient.requestLocationUpdates(locationRequest,
@@ -374,6 +401,7 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
     public void onCurrentLocationUpdate(MapView mapView, MapPoint currentLocation, float accuracyInMeters) {
         MapPoint.GeoCoordinate mapPointGeo = currentLocation.getMapPointGeoCoord();
         Log.i(LOG_TAG, String.format("MapView onCurrentLocationUpdate (%f,%f) accuracy (%f)", mapPointGeo.latitude, mapPointGeo.longitude, accuracyInMeters));
+
     }
 
     @Override
