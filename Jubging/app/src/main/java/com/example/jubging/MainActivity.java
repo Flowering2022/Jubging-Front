@@ -143,8 +143,8 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
                                 distance(latitude, longitude, current_latitude, current_longitude, "kilometer");
 
 
-                        // 현재 위치에서 부터 3km거리 안에 있는 마커만 표시하기
-                        if (distanceKiloMeter < 3) {
+                        // 현재 위치에서 부터 1.5km거리 안에 있는 마커만 표시하기
+                        if (distanceKiloMeter < 1.5) {
                             MapPoint tempmapPoint = MapPoint.mapPointWithGeoCoord(latitude, longitude);
                             marker[i] = new MapPOIItem();
                             marker[i].setTag(i + 1);
@@ -236,6 +236,8 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
                 }
             }
         }).start();
+
+
         MapPolyline polyline = new MapPolyline();
         polyline.setTag(1000);
         polyline.setLineColor(Color.argb(128, 255, 51, 0)); // Polyline 컬러 지정.
@@ -256,8 +258,8 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
             }
         });
         LocationRequest locationRequest = new LocationRequest();
-        locationRequest.setFastestInterval(1000*60);
-        locationRequest.setInterval(1000*60);
+        locationRequest.setFastestInterval(1000*100);
+        locationRequest.setInterval(1000*100);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         mLocationCallback = new LocationCallback() {
             @Override
