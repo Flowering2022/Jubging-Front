@@ -128,12 +128,26 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
         RetrofitInterface service = retrofit.create(RetrofitInterface.class); //RetrofitInterface 겍체 구현
 
         Button btn_finish = findViewById(R.id.btn_finish); //전송 버튼
+
+        Button btn_pause = findViewById(R.id.btn_pause);
+        btn_pause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                btn_pause.setVisibility(View.INVISIBLE); //시작버튼 누르면 시작버튼 없애기
+                btn_finish.setVisibility(View.VISIBLE); //운동완료 버튼 보이기
+                btn_finish.setEnabled(true); //운동완료버튼 활성화
+                btn_finish.setText("플로깅 완료하기"); //버튼 내 택스트 변경
+            }
+        });
+
         btn_finish.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v){
-                btn_finish.setText("오늘도 지구를 지키셨습니다!");
+            public void onClick(View v) {
+                btn_finish.setText("오늘도 지구를 지키셨습니다!"); //버튼 내 택스트 변경
+                btn_pause.setVisibility(View.VISIBLE); //시작 버튼 보이기
+                btn_finish.setEnabled(false); //운동완료버튼 비활성화
 
-
+                //서버 주소/1 전달
                 Call<DataClass> call = service.getName("1");
 
                 call.enqueue(new Callback<DataClass>(){

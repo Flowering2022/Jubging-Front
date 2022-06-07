@@ -34,13 +34,12 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/trc" />
 
-        <ToggleButton
+        <Button
             android:id="@+id/btn_pause"
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:layout_marginLeft="100dp"
-            android:textOff="start"
-            android:textOn="pause"/>
+            android:text="start"/>
 
 
 
@@ -311,7 +310,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:text="플로깅 완료하기"/>
+                        android:text="플로깅 완료하기"
+                        android:visibility="invisible"/>
                 </LinearLayout>
 
             </LinearLayout>
