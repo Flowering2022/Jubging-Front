@@ -18,12 +18,6 @@
         android:theme="@style/Theme.Jubging"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".balloon_layout"
-            android:exported="false" />
-        <activity
-            android:name=".PasingActivity2"
-            android:exported="true"></activity>
-        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
