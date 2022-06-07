@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".CompleteActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/map_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageButton
+            android:id="@+id/trc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:layout_marginEnd="16dp"
+            android:background="#00FFFFFF"
+            android:src="@drawable/currentlocationw"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/location_Btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="56dp"
+            android:layout_marginEnd="16dp"
+            android:background="#00FFFFFF"
+            android:src="@drawable/cleanhousew"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/trc" />
+
+        <!--        <ToggleButton-->
+        <!--            android:id="@+id/btn_pause"-->
+        <!--            android:layout_width="70dp"-->
+        <!--            android:layout_height="70dp"-->
+        <!--            android:layout_marginLeft="100dp"-->
+        <!--            android:text="pause" />-->
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/slidingdrawer_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        android:orientation="vertical" >
+
+
+
+        //운동기록 슬라이딩 화면
+        <SlidingDrawer
+            android:id="@+id/slidingdrawer"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_alignParentBottom="true"
+            android:content="@+id/exercise_content"
+            android:handle="@+id/exercise_handle"
+            android:allowSingleTap="true"
+            android:bottomOffset="5dp"
+            android:orientation="vertical">
+
+            <!--            <LinearLayout-->
+            <!--                android:id="@+id/handle"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="match_parent"-->
+            <!--                android:gravity="bottom"-->
+            <!--                android:orientation="vertical">-->
+            <!--                <TextView-->
+            <!--                    android:layout_width="wrap_content"-->
+            <!--                    android:layout_height="0dp"-->
+            <!--                    android:layout_weight="3">-->
+
+            <!--                </TextView>-->
+            <!--                <ToggleButton-->
+            <!--                    android:id="@+id/pause"-->
+            <!--                    android:layout_width="70dp"-->
+            <!--                    android:layout_height="70dp"-->
+
+            <!--                    android:layout_gravity="right"-->
+            <!--                    android:layout_marginRight="10dp"-->
+            <!--                    android:layout_alignParentRight="true"-->
+            <!--                    android:layout_above="@id/exercise_view"-->
+            <!--                    android:text="pause" />-->
+
+
+            <!--슬라이딩 화면의 handle-->
+            <!--클릭 또는 눌러서 올리거나 내리면 슬라이딩 화면이 움직임-->
+
+            <Button
+                android:id="@+id/exercise_handle"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_gravity="bottom"
+                android:text="운동기록보기" />
+            <!--        </LinearLayout>-->
+
+            <!--슬라이딩 화면이 올라갔을 때 등장하는 화면-->
+            <LinearLayout
+                android:id="@+id/exercise_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#ffffff"
+                android:orientation="vertical">
+
+                <!--                <TextView-->
+                <!--                    android:layout_width="wrap_content"-->
+                <!--                    android:layout_height="wrap_content"-->
+                <!--                    android:text="이것은 슬라이딩드로어 입니다." />-->
+
+                <!--                <ToggleButton-->
+                <!--                    android:layout_width="100dp"-->
+                <!--                    android:layout_height="100dp"></ToggleButton>-->
+                <!--                &lt;!&ndash;                    android:layout_above="@id/slidingdrawer"&ndash;&gt;-->
+                <!--                &lt;!&ndash;                    android:gravity="bottom"> &ndash;&gt;-->
+
+                <LinearLayout
+                    android:id="@+id/time_km_fast_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:orientation="horizontal"
+                    android:layout_weight="2">
+                    <LinearLayout
+                        android:id="@+id/time_view"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/time"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="4"
+                            android:gravity="center"
+                            android:textSize="20sp"
+                            android:text="시간"/>
+                        <TextView
+                            android:id="@+id/time_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="시간"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/km_view"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/km"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="4"
+                            android:gravity="center"
+                            android:textSize="20sp"
+                            android:text="킬로미터"/>
+                        <TextView
+                            android:id="@+id/km_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="킬로미터"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/fast_view"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/fast"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="4"
+                            android:gravity="center"
+                            android:textSize="20sp"
+                            android:text="속력"/>
+                        <TextView
+                            android:id="@+id/fast_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="속력"/>
+
+                    </LinearLayout>
+
+                    <!--                <Button-->
+                    <!--                    android:layout_width="0dp"-->
+                    <!--                    android:layout_height="match_parent"-->
+                    <!--                    android:layout_weight="1"-->
+                    <!--                    android:text="시간"-->
+                    <!--                    android:layout_gravity="bottom"/>-->
+                    <!--                    <Button-->
+                    <!--                        android:layout_width="0dp"-->
+                    <!--                        android:layout_height="match_parent"-->
+                    <!--                        android:layout_weight="1"-->
+                    <!--                        android:text="킬로미터"/>-->
+                    <!--                    <Button-->
+                    <!--                        android:layout_width="0dp"-->
+                    <!--                        android:layout_height="match_parent"-->
+                    <!--                        android:layout_weight="1"-->
+                    <!--                        android:text="시속"/>-->
+                </LinearLayout>
+
+                <!--                <LinearLayout-->
+                <!--                    android:id="@+id/btn_text_1"-->
+                <!--                    android:layout_width="match_parent"-->
+                <!--                    android:layout_height="0dp"-->
+                <!--                    android:orientation="horizontal"-->
+                <!--                    android:layout_weight="0.5">-->
+                <!--                    <TextView-->
+                <!--                        android:layout_width="0dp"-->
+                <!--                        android:layout_height="match_parent"-->
+                <!--                        android:layout_weight="1"-->
+                <!--                        android:gravity="center"-->
+                <!--                        android:text="시간"/>-->
+                <!--                    <TextView-->
+                <!--                        android:layout_width="0dp"-->
+                <!--                        android:layout_height="match_parent"-->
+                <!--                        android:layout_weight="1"-->
+                <!--                        android:gravity="center"-->
+                <!--                        android:text="킬로미터"/>-->
+                <!--                    <TextView-->
+                <!--                        android:layout_width="0dp"-->
+                <!--                        android:layout_height="match_parent"-->
+                <!--                        android:layout_weight="1"-->
+                <!--                        android:gravity="center"-->
+                <!--                        android:text="시속"/>-->
+                <!--                </LinearLayout>-->
+
+                <LinearLayout
+                    android:id="@+id/number_distance_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:orientation="horizontal"
+                    android:layout_weight="2">
+                    <LinearLayout
+                        android:id="@+id/number_view"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/number"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="4"
+                            android:gravity="center"
+                            android:textSize="20sp"
+                            android:text="플로깅 총 횟수"/>
+                        <!--                    android:layout_marginRight="20dp"-->
+                        <!--                    android:layout_marginLeft="25dp"-->
+                        <TextView
+                            android:id="@+id/number_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="플로깅 총 횟수"/>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:id="@+id/distance_view"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/distance"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="4"
+                            android:gravity="center"
+                            android:textSize="20sp"
+                            android:text="총 거리"/>
+                        <TextView
+                            android:id="@+id/distance_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="총거리"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:id="@+id/finish_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1">
+                    <Button
+                        android:id="@+id/btn_finish"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="운동 종료"/>
+                </LinearLayout>
+
+            </LinearLayout>
+        </SlidingDrawer>
+
+    </RelativeLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

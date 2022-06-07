@@ -34,12 +34,12 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/trc" />
 
-        <ToggleButton
-            android:id="@+id/pause"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:layout_marginLeft="100dp"
-            android:text="pause" />
+<!--        <ToggleButton-->
+<!--            android:id="@+id/btn_pause"-->
+<!--            android:layout_width="70dp"-->
+<!--            android:layout_height="70dp"-->
+<!--            android:layout_marginLeft="100dp"-->
+<!--            android:text="pause" />-->
 
 
 
@@ -47,6 +47,7 @@
 
 
     <RelativeLayout
+        android:id="@+id/slidingdrawer_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
 
@@ -60,8 +61,8 @@
             android:layout_width="match_parent"
             android:layout_height="300dp"
             android:layout_alignParentBottom="true"
-            android:content="@+id/content"
-            android:handle="@+id/exercise_view"
+            android:content="@+id/exercise_content"
+            android:handle="@+id/exercise_handle"
             android:allowSingleTap="true"
             android:bottomOffset="5dp"
             android:orientation="vertical">
@@ -90,20 +91,20 @@
 <!--                    android:text="pause" />-->
 
 
-            //슬라이딩 화면의 handle
-            //클릭 또는 눌러서 올리거나 내리면 슬라이딩 화면이 움직임
+            <!--슬라이딩 화면의 handle-->
+            <!--클릭 또는 눌러서 올리거나 내리면 슬라이딩 화면이 움직임-->
 
                 <Button
-                    android:id="@+id/exercise_view"
+                    android:id="@+id/exercise_handle"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_gravity="bottom"
                     android:text="운동기록보기" />
 <!--        </LinearLayout>-->
 
-            //슬라이딩 화면이 올라갔을 때 등장하는 화면
+            <!--슬라이딩 화면이 올라갔을 때 등장하는 화면-->
             <LinearLayout
-                android:id="@+id/content"
+                android:id="@+id/exercise_content"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="#ffffff"
@@ -121,11 +122,13 @@
 <!--                &lt;!&ndash;                    android:gravity="bottom"> &ndash;&gt;-->
 
                 <LinearLayout
+                    android:id="@+id/time_km_fast_view"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:orientation="horizontal"
                     android:layout_weight="2">
                     <LinearLayout
+                        android:id="@+id/time_view"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
@@ -139,7 +142,7 @@
                             android:textSize="20sp"
                             android:text="시간"/>
                         <TextView
-                            android:id="@+id/text_time"
+                            android:id="@+id/time_text"
                             android:layout_width="match_parent"
                             android:layout_height="0dp"
                             android:layout_weight="1"
@@ -149,6 +152,7 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/km_view"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
@@ -162,7 +166,7 @@
                             android:textSize="20sp"
                             android:text="킬로미터"/>
                         <TextView
-                            android:id="@+id/text_km"
+                            android:id="@+id/km_text"
                             android:layout_width="match_parent"
                             android:layout_height="0dp"
                             android:layout_weight="1"
@@ -172,6 +176,7 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/fast_view"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
@@ -185,7 +190,7 @@
                             android:textSize="20sp"
                             android:text="속력"/>
                         <TextView
-                            android:id="@+id/text_fast"
+                            android:id="@+id/fast_text"
                             android:layout_width="match_parent"
                             android:layout_height="0dp"
                             android:layout_weight="1"
@@ -239,17 +244,19 @@
 <!--                </LinearLayout>-->
 
                 <LinearLayout
+                    android:id="@+id/number_distance_view"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:orientation="horizontal"
                     android:layout_weight="2">
                     <LinearLayout
+                        android:id="@+id/number_view"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:orientation="vertical">
                     <TextView
-                        android:id="@+id/btn_count"
+                        android:id="@+id/number"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="4"
@@ -259,7 +266,7 @@
 <!--                    android:layout_marginRight="20dp"-->
 <!--                    android:layout_marginLeft="25dp"-->
                         <TextView
-                            android:id="@+id/btn_count_text"
+                            android:id="@+id/number_text"
                             android:layout_width="match_parent"
                             android:layout_height="0dp"
                             android:layout_weight="1"
@@ -267,11 +274,13 @@
                             android:text="플로깅 총 횟수"/>
                     </LinearLayout>
                     <LinearLayout
+                        android:id="@+id/distance_view"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:orientation="vertical">
                         <TextView
+                            android:id="@+id/distance"
                             android:layout_width="match_parent"
                             android:layout_height="0dp"
                             android:layout_weight="4"
@@ -279,7 +288,7 @@
                             android:textSize="20sp"
                             android:text="총 거리"/>
                         <TextView
-                            android:id="@+id/btn_count_text_distance"
+                            android:id="@+id/distance_text"
                             android:layout_width="match_parent"
                             android:layout_height="0dp"
                             android:layout_weight="1"
@@ -292,6 +301,7 @@
 
 
                 <LinearLayout
+                    android:id="@+id/finish_view"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1">

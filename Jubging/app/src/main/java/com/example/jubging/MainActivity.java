@@ -57,6 +57,14 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.w3c.dom.Text;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 public class MainActivity extends AppCompatActivity implements MapView.CurrentLocationEventListener, MapView.MapViewEventListener, MapView.POIItemEventListener
 {
     private static final String LOG_TAG = "MainActivity";
@@ -71,8 +79,8 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
     JSONArray jsonArray;
     private PermissionSupport permission;
 
-    private Button btn_finish, pause;
-    private TextView btn_count;
+    private Button btn_finish, btn_pause;
+    private TextView number, distance;
     private int count = 0;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -108,65 +116,114 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
             }
         });
 
-        //btn_count
-        btn_count = findViewById(R.id.btn_count);
-        btn_count.setText(count+"");
-        btn_finish = findViewById(R.id.btn_finish);
-        btn_finish.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                while (count >= 0) {
-//                    count++;
-//                    btn_count.setText(count + "");
-//                }
-                @Override
-                public void onClick(View v) {
-                    if (count == 0){
-                        count++;
-                    }
-                    else {
-                        btn_count.setText(count + "");
-                        count++;
-                    }
+        //총 거리 db로 부터 받아오기
+        distance = findViewById(R.id.distance);
 
-//                if (count %2 == 1) {
-//                    btn_count.setText(count + "");//1 //3
-//                    count++;//2 //4
-//                }
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(JsonPlaceHOlderApi.MOCK_SERVER_URL) //본인의 장고 서버 url 적기
+                .addConverterFactory(GsonConverterFactory.create()) //JSON을 변환해줄 Gson 변환기
+                .build();
 
-//               if (count ==0){
-//                    count++; //1
-//                } else if (count == 1) {
-//                    btn_count.setText(count + ""); //1
-//                    count++; //2
-//                }
-//                else if(count==2){
-//                    count++; //3
-//                }
-//                else if (count == 3) {
-//                    count-=1; //2
-//                    btn_count.setText(count + ""); //2
-//                    count += 2; //4
-//                }
-//                else if (count ==4){
-//                    count++; //5
-//                }
-//                else if (count ==5){
-//                   count-=2; //3
-//                   btn_count.setText(count + ""); //3
-//                   count += 3; //6
-//               }
-//               else if (count ==6){
-//                   count++; //7
-//               }
-//               else if (count ==7){
-//                   count-=3; //4
-//                   btn_count.setText(count + ""); //4
-//                   count += 4; //8
-//               }
+        JsonPlaceHOlderApi jsonPlaceHOlderApi = retrofit.create(JsonPlaceHOlderApi.class);
 
+        //Post.. url을 못가져와서 인가..
+        Call<List<JsonPlaceHOlderApi.Post>> call = jsonPlaceHOlderApi.getPosts();
+
+        call.enqueue(new Callback<List<JsonPlaceHOlderApi.Post>>() {
+            @Override
+            public void onResponse(Call<List<JsonPlaceHOlderApi.Post>> call, Response<List<JsonPlaceHOlderApi.Post>> response) {
+                if (!response.isSuccessful())
+                {
+                    distance.setText("Code: " + response.code());
+                    return;
+                }
+
+                List<JsonPlaceHOlderApi.Post> posts = response.body();
+
+                for (JsonPlaceHOlderApi.Post post : posts) {
+                    String content ="";
+                    content += "Distance : " + post.getDistance__sum() + "\n";
+
+                    distance.append(content);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<JsonPlaceHOlderApi.Post>> call, Throwable t) {
+                distance.setText(t.getMessage());
             }
         });
+
+        //화면 전환 버튼 동작
+        //Button btn_finish = (Button) findViewById(R.id.btn_finish);
+        btn_finish = findViewById(R.id.btn_finish);
+        btn_finish.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                Intent intent = new Intent(getApplicationContext(), CompleteActivity.class);
+                startActivity(intent);
+            }
+        });
+
+//        //플로깅 총 횟수
+//        number = findViewById(R.id.number);
+//        number.setText(count+"");
+//        btn_finish = findViewById(R.id.btn_finish);
+//        btn_finish.setOnClickListener(new View.OnClickListener() {
+////            @Override
+////            public void onClick(View v) {
+////                while (count >= 0) {
+////                    count++;
+////                    btn_count.setText(count + "");
+////                }
+//                @Override
+//                public void onClick(View v) {
+//                    if (count == 0){
+//                        count++;
+//                    }
+//                    else {
+//                        number.setText(count + "");
+//                        count++;
+//                    }
+//
+////                if (count %2 == 1) {
+////                    btn_count.setText(count + "");//1 //3
+////                    count++;//2 //4
+////                }
+//
+////               if (count ==0){
+////                    count++; //1
+////                } else if (count == 1) {
+////                    btn_count.setText(count + ""); //1
+////                    count++; //2
+////                }
+////                else if(count==2){
+////                    count++; //3
+////                }
+////                else if (count == 3) {
+////                    count-=1; //2
+////                    btn_count.setText(count + ""); //2
+////                    count += 2; //4
+////                }
+////                else if (count ==4){
+////                    count++; //5
+////                }
+////                else if (count ==5){
+////                   count-=2; //3
+////                   btn_count.setText(count + ""); //3
+////                   count += 3; //6
+////               }
+////               else if (count ==6){
+////                   count++; //7
+////               }
+////               else if (count ==7){
+////                   count-=3; //4
+////                   btn_count.setText(count + ""); //4
+////                   count += 4; //8
+////               }
+//
+//            }
+//        });
 
 
 
