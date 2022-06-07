@@ -116,55 +116,86 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
             }
         });
 
-        //총 거리 db로 부터 받아오기
-        distance = findViewById(R.id.distance);
+//        //총 거리 db로 부터 받아오기
+//        distance = findViewById(R.id.distance);
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(JsonPlaceHOlderApi.MOCK_SERVER_URL) //본인의 장고 서버 url 적기
-                .addConverterFactory(GsonConverterFactory.create()) //JSON을 변환해줄 Gson 변환기
+        //Retrofit 인스턴스 생성
+        retrofit2.Retrofit retrofit = new retrofit2.Retrofit.Builder()
+                .baseUrl("http://ec2-52-79-240-128.ap-northeast-2.compute.amazonaws.com/") //baseUrl
+                .addConverterFactory(GsonConverterFactory.create()) //JSON을 변환해줄 Gson 변환기 등록
                 .build();
 
-        JsonPlaceHOlderApi jsonPlaceHOlderApi = retrofit.create(JsonPlaceHOlderApi.class);
+        RetrofitInterface service = retrofit.create(RetrofitInterface.class); //RetrofitInterface 겍체 구현
 
-        //Post.. url을 못가져와서 인가..
-        Call<List<JsonPlaceHOlderApi.Post>> call = jsonPlaceHOlderApi.getPosts();
-
-        call.enqueue(new Callback<List<JsonPlaceHOlderApi.Post>>() {
+        Button btn_finish = findViewById(R.id.btn_finish); //전송 버튼
+        btn_finish.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onResponse(Call<List<JsonPlaceHOlderApi.Post>> call, Response<List<JsonPlaceHOlderApi.Post>> response) {
-                if (!response.isSuccessful())
-                {
-                    distance.setText("Code: " + response.code());
-                    return;
-                }
+            public void onClick(View v){
+                Call<DataClass> call = service.getName("1");
 
-                List<JsonPlaceHOlderApi.Post> posts = response.body();
+                call.enqueue(new Callback<DataClass>(){
+                    @Override
+                    public void onResponse(Call<DataClass> call, Response<DataClass> response){
+                        if(response.isSuccessful()){
+                            DataClass result = response.body();
 
-                for (JsonPlaceHOlderApi.Post post : posts) {
-                    String content ="";
-                    content += "Distance : " + post.getDistance__sum() + "\n";
+                            //서버에서 응답방은 데이터를 TextView에 넣어준다.
+                            TextView distance__sum = findViewById(R.id.distance);
 
-                    distance.append(content);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<JsonPlaceHOlderApi.Post>> call, Throwable t) {
-                distance.setText(t.getMessage());
-            }
-        });
-
-        //화면 전환 버튼 동작
-        //Button btn_finish = (Button) findViewById(R.id.btn_finish);
-        btn_finish = findViewById(R.id.btn_finish);
-        btn_finish.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view){
-                Intent intent = new Intent(getApplicationContext(), CompleteActivity.class);
-                startActivity(intent);
+                            distance__sum.setText(result.distance__sum+"");
+                        }
+                        else{
+                            //실패
+                            Log.d("김호엑", "실패");
+                        }
+                    }
+                    @Override
+                    public void onFailure(Call<DataClass> call, Throwable t){
+                        //통신 실패
+                        Log.d("김호엑", "통신실패");
+                    }
+                });
             }
         });
-
+//        //Post.. url을 못가져와서 인가..
+//        Call<List<JsonPlaceHOlderApi.Post>> call = jsonPlaceHOlderApi.getPosts();
+//
+//        call.enqueue(new Callback<List<JsonPlaceHOlderApi.Post>>() {
+//            @Override
+//            public void onResponse(Call<List<JsonPlaceHOlderApi.Post>> call, Response<List<JsonPlaceHOlderApi.Post>> response) {
+//                if (!response.isSuccessful())
+//                {
+//                    distance.setText("Code: " + response.code());
+//                    return;
+//                }
+//
+//                List<JsonPlaceHOlderApi.Post> posts = response.body();
+//
+//                for (JsonPlaceHOlderApi.Post post : posts) {
+//                    String content ="";
+//                    content += "Distance : " + post.getDistance__sum() + "\n";
+//
+//                    distance.append(content);
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<List<JsonPlaceHOlderApi.Post>> call, Throwable t) {
+//                distance.setText(t.getMessage());
+//            }
+//        });
+////////////////////////////////////////////////////////////////////////////////
+//        //화면 전환 버튼 동작
+//        //Button btn_finish = (Button) findViewById(R.id.btn_finish);
+//        btn_finish = findViewById(R.id.btn_finish);
+//        btn_finish.setOnClickListener(new View.OnClickListener(){
+//            @Override
+//            public void onClick(View view){
+//                Intent intent = new Intent(getApplicationContext(), CompleteActivity.class);
+//                startActivity(intent);
+//            }
+//        });
+/////////////////////////////////////////////////////////////////////////////////
 //        //플로깅 총 횟수
 //        number = findViewById(R.id.number);
 //        number.setText(count+"");

@@ -24,10 +24,10 @@
         </activity>
 
         <!--추가 activity 지정(화면전환)-->
-        <activity
-            android:name=".CompleteActivity"
-            android:exported="true">
-        </activity>
+<!--        <activity-->
+<!--            android:name=".CompleteActivity"-->
+<!--            android:exported="true">-->
+<!--        </activity>-->
 
         <activity
             android:name=".MainActivity"
