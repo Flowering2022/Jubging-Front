@@ -21,20 +21,27 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.appcompat.widget.AppCompatImageView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 
+import net.daum.mf.map.api.CalloutBalloonAdapter;
 import net.daum.mf.map.api.CameraUpdateFactory;
 import net.daum.mf.map.api.MapCircle;
 import net.daum.mf.map.api.MapPoint;
@@ -68,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
     Double current_latitude;
     Double current_longitude;
     JSONArray jsonArray;
-    private PermissionSupport permission;
+
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -77,7 +84,8 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
 
         setContentView(R.layout.activity_main);
 
-        permissionCheck();
+
+
 
         //지도를 띄우자
         // java code
@@ -94,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
             checkRunTimePermission();
         }
 
-        ImageButton btn = (ImageButton) findViewById(R.id.trc);
+        final ImageButton btn = (ImageButton) findViewById(R.id.trc);
         btn.bringToFront();
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,7 +111,18 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
             }
         });
 
-        ImageButton button = (ImageButton) findViewById(R.id.location_Btn);
+//        final Button nextbtn = (Button)findViewById(R.id.next);
+//        nextbtn.setOnClickListener(new View.OnClickListener(){
+//            @Override
+//            public void onClick(View view) {
+//
+//                Intent intent = new Intent(MainActivity.this, MainActivity2.class);
+//                startActivity(intent);
+//            }
+//        });
+
+
+        final ImageButton button = (ImageButton) findViewById(R.id.location_Btn);
         button.bringToFront();
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -149,6 +168,19 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
                 }
             }
         });
+
+
+//        final ToggleButton plogging_tb = (ToggleButton)this.findViewById(R.id.plogging_btn);
+//        plogging_tb.setOnClickListener(new View.OnClickListener(){
+//            @Override
+//            public void onClick(View view) {
+//                if(plogging_tb.isChecked()){
+//                    plogging_tb.setBackgroundDrawable(getResources().getDrawable(R.drawable.start));
+//                }else{
+//                    plogging_tb.setBackgroundDrawable(getResources().getDrawable(R.drawable.pause));
+//                }
+//            }
+//        });
 
 
 
@@ -225,30 +257,11 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
         }).start();
 
 
+
+
     }
 
-    private void permissionCheck() {
 
-        // PermissionSupport.java 클래스 객체 생성
-        permission = new PermissionSupport(this, this);
-
-        // 권한 체크 후 리턴이 false로 들어오면
-        if (!permission.checkPermission()){
-            //권한 요청
-            permission.requestPermission();
-        }
-    }
-
-    // Request Permission에 대한 결과 값 받아와
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        //여기서도 리턴이 false로 들어온다면 (사용자가 권한 허용 거부)
-        if (!permission.permissionResult(requestCode, permissions, grantResults)) {
-            // 다시 permission 요청
-            permission.requestPermission();
-        }
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
 
 
     // 거리 구하기 (점과 점 사이의 거리)
@@ -393,7 +406,6 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
 
     @Override
     public void onMapViewInitialized(MapView mapView) {
-        Log.d("TAG", "onMapViewInitialized: " + mapView.getPOIItems().length);
     }
 
     @Override
@@ -408,7 +420,6 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
 
     @Override
     public void onMapViewSingleTapped(MapView mapView, MapPoint mapPoint) {
-        Log.d("TAG", "onMapViewSingleTapped: " + mapView.getPOIItems().length);
     }
 
     @Override
@@ -425,7 +436,6 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
     //지도를 드래그 했을 때 이벤트
     @Override
     public void onMapViewDragStarted(MapView mapView, MapPoint mapPoint) {
-        Log.d("TAG", "onMapViewDragStarted: ");
         mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeadingWithoutMapMoving);
 
         current_latitude = mapView.getMapCenterPoint().getMapPointGeoCoord().latitude;
@@ -443,13 +453,9 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
 
     }
 
-    MapPOIItem temp = null;
 
     @Override
     public void onPOIItemSelected(MapView mapView, MapPOIItem mapPOIItem) {
-        if (mapView != null && mapPOIItem != null) {
-            Log.d("TAG", "onPOIItemSelected: " + mapPOIItem.getItemName() + " " + mapView.isSelected());
-        }
     }
 
     @Override
@@ -467,69 +473,7 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
 
     }
 
-    public class PermissionSupport {
 
-        private Context context;
-        private Activity activity;
 
-        //요청할 권한 배열 저장
-        private String[] permissions = {
-                Manifest.permission.BLUETOOTH,
-                Manifest.permission.BLUETOOTH_ADMIN,
-                Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.READ_PHONE_STATE,
-                Manifest.permission.ACCESS_FINE_LOCATION
-
-        };
-        private List permissionList;
-
-        //권한 요청시 발생하는 창에 대한 결과값을 받기 위해 지정해주는 int 형
-        //원하는 임의의 숫자 지정
-        private final int MULTIPLE_PERMISSIONS = 1023; //요청에 대한 결과값 확인을 위해 RequestCode를 final로 정의
-
-        //생성자에서 Activity와 Context를 파라미터로 받아
-        public PermissionSupport(Activity _activity, Context _context){
-            this.activity = _activity;
-            this.context = _context;
-        }
-
-        //배열로 선언한 권한 중 허용되지 않은 권한 있는지 체크
-        public boolean checkPermission() {
-            int result;
-            permissionList = new ArrayList<>();
-
-            for(String pm : permissions){
-                result = ContextCompat.checkSelfPermission(context, pm);
-                if(result != PackageManager.PERMISSION_GRANTED){
-                    permissionList.add(pm);
-                }
-            }
-            if(!permissionList.isEmpty()){
-                return false;
-            }
-            return true;
-        }
-
-        //배열로 선언한 권한에 대해 사용자에게 허용 요청
-        public void requestPermission(){
-            ActivityCompat.requestPermissions(activity, (String[]) permissionList.toArray(new String[permissionList.size()]), MULTIPLE_PERMISSIONS);
-        }
-
-        //요청한 권한에 대한 결과값 판단 및 처리
-        public boolean permissionResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
-            //우선 requestCode가 아까 위에 final로 선언하였던 숫자와 맞는지, 결과값의 길이가 0보다는 큰지 먼저 체크
-            if(requestCode == MULTIPLE_PERMISSIONS && (grantResults.length >0)) {
-                for(int i=0; i< grantResults.length; i++){
-                    //grantResults 가 0이면 사용자가 허용한 것 / -1이면 거부한 것
-                    //-1이 있는지 체크하여 하나라도 -1이 나온다면 false를 리턴
-                    if(grantResults[i] == -1){
-                        return false;
-                    }
-                }
-            }
-            return true;
-        }
-
-    }
 }
 
