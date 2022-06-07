@@ -11,13 +11,18 @@ public class DataClass {
     @SerializedName("distance__sum")
     public int distance__sum;
 
+    @SerializedName("plogging_freq")
+    public int plogging_freq;
+
 
 
     // toString()을 Override 해주지 않으면 객체 주소값을 출력함
     @Override
     public String toString() {
         return "PostResult{" +
-                "distance__sum=" + distance__sum +'\'' +
+                "distance__sum=" + distance__sum +
+                "plogging_freq" + plogging_freq +
+                '\'' +
                 '}';
     }
 }

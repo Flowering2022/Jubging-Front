@@ -26,6 +26,7 @@ import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
@@ -34,6 +35,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 
 import net.daum.mf.map.api.CameraUpdateFactory;
@@ -116,9 +118,7 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
             }
         });
 
-//        //총 거리 db로 부터 받아오기
-//        distance = findViewById(R.id.distance);
-
+    //서버 연결헤서 데이터 가져오기
         //Retrofit 인스턴스 생성
         retrofit2.Retrofit retrofit = new retrofit2.Retrofit.Builder()
                 .baseUrl("http://ec2-52-79-240-128.ap-northeast-2.compute.amazonaws.com/") //baseUrl
@@ -131,6 +131,9 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
         btn_finish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
+                btn_finish.setText("오늘도 지구를 지키셨습니다!");
+
+
                 Call<DataClass> call = service.getName("1");
 
                 call.enqueue(new Callback<DataClass>(){
@@ -141,18 +144,19 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
 
                             //서버에서 응답방은 데이터를 TextView에 넣어준다.
                             TextView distance__sum = findViewById(R.id.distance);
+                            TextView plogging_freq = findViewById(R.id.number);
 
                             distance__sum.setText(result.distance__sum+"");
+                            plogging_freq.setText(result.plogging_freq+"");
+
                         }
                         else{
                             //실패
-                            Log.d("김호엑", "실패");
                         }
                     }
                     @Override
                     public void onFailure(Call<DataClass> call, Throwable t){
                         //통신 실패
-                        Log.d("김호엑", "통신실패");
                     }
                 });
             }
