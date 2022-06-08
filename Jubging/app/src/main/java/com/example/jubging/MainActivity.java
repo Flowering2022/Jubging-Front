@@ -148,36 +148,8 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
         btn_finish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                btn_finish.setText("오늘도 지구를 지키셨습니다!"); //버튼 내 택스트 변경
-                btn_pause.setVisibility(View.VISIBLE); //시작 버튼 보이기
-                btn_finish.setEnabled(false); //운동완료버튼 비활성화
-
-                //서버 주소/1 전달
-                Call<DataClass> call = service.getName("1");
-
-                call.enqueue(new Callback<DataClass>(){
-                    @Override
-                    public void onResponse(Call<DataClass> call, Response<DataClass> response){
-                        if(response.isSuccessful()){
-                            DataClass result = response.body();
-
-                            //서버에서 응답방은 데이터를 TextView에 넣어준다.
-                            final TextView distance__sum = findViewById(R.id.distance);
-                            final TextView plogging_freq = findViewById(R.id.number);
-
-                            distance__sum.setText(result.distance__sum+"");
-                            plogging_freq.setText(result.plogging_freq+"");
-
-                        }
-                        else{
-                            //실패
-                        }
-                    }
-                    @Override
-                    public void onFailure(Call<DataClass> call, Throwable t){
-                        //통신 실패
-                    }
-                });
+                Intent intent = new Intent(getApplicationContext(), FinishActivity.class);
+                startActivity(intent);
             }
         });
 //        //Post.. url을 못가져와서 인가..
@@ -288,6 +260,8 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
                 try {
 
                     mapView.removeAllPOIItems();
+                    trackingMarker.setCustomImageResourceId(R.drawable.userimg); // 마커 이미지.
+                    mapView.addPOIItem(trackingMarker);
 
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject obj = jsonArray.getJSONObject(i);
