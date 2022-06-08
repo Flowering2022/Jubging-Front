@@ -8,8 +8,8 @@
 
     <ImageView
         android:id="@+id/finish_logo"
-        android:layout_width="413dp"
-        android:layout_height="731dp"
+        android:layout_width="483dp"
+        android:layout_height="937dp"
         android:src="@drawable/finish_logo"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -18,18 +18,17 @@
 
     <TextView
         android:id="@+id/logo_text"
-        android:layout_width="233dp"
-        android:layout_height="180dp"
+        android:layout_width="212dp"
+        android:layout_height="121dp"
+        android:layout_marginTop="76dp"
         android:fontFamily="@font/windsong"
         android:text="\t \tJubging"
         android:textColor="@color/white"
         android:textSize="60sp"
-        app:layout_constraintBottom_toBottomOf="@+id/finish_logo"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.713"
+        app:layout_constraintHorizontal_bias="0.427"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/finish_logo"
-        app:layout_constraintVertical_bias="0.029" />
+        app:layout_constraintTop_toTopOf="@+id/finish_logo" />
 
     <ImageButton
         android:id="@+id/restart"
@@ -64,9 +63,9 @@
             android:layout_width="300dp"
             android:layout_height="30dp"
             android:background="@drawable/finishlogo_btn"
+            android:fontFamily="@font/gmarketm"
             android:text="운동기록보기"
             android:textSize="10sp"
-            android:fontFamily="@font/gmarketm"
             tools:visibility="gone" />
         <!--        </LinearLayout>-->
 
@@ -94,21 +93,21 @@
 
                     <TextView
                         android:id="@+id/time"
-                        android:fontFamily="@font/gmarketm"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="4"
+                        android:fontFamily="@font/gmarketm"
                         android:gravity="center"
                         android:text="0:0"
-                        android:textSize="30sp"
-                        android:textAlignment="center"/>
+                        android:textAlignment="center"
+                        android:textSize="30sp" />
 
                     <TextView
                         android:id="@+id/time_text"
-                        android:fontFamily="@font/gmarketl"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
+                        android:fontFamily="@font/gmarketl"
                         android:gravity="center"
                         android:text="시간" />
 
@@ -123,10 +122,10 @@
 
                     <TextView
                         android:id="@+id/km"
-                        android:fontFamily="@font/gmarketm"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="4"
+                        android:fontFamily="@font/gmarketm"
                         android:gravity="center"
                         android:text="0m"
                         android:textAlignment="center"
@@ -134,10 +133,10 @@
 
                     <TextView
                         android:id="@+id/km_text"
-                        android:fontFamily="@font/gmarketl"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
+                        android:fontFamily="@font/gmarketl"
                         android:gravity="center"
                         android:text="미터" />
 
@@ -152,20 +151,20 @@
 
                     <TextView
                         android:id="@+id/fast"
-                        android:fontFamily="@font/gmarketm"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="4"
+                        android:fontFamily="@font/gmarketm"
                         android:gravity="center"
                         android:text="0"
                         android:textSize="30sp" />
 
                     <TextView
                         android:id="@+id/fast_text"
-                        android:fontFamily="@font/gmarketl"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
+                        android:fontFamily="@font/gmarketl"
                         android:gravity="center"
                         android:text="속력" />
 
@@ -189,10 +188,10 @@
 
                     <TextView
                         android:id="@+id/number"
-                        android:fontFamily="@font/gmarketm"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="4"
+                        android:fontFamily="@font/gmarketm"
                         android:gravity="center"
                         android:text=""
                         android:textSize="30sp" />
@@ -200,10 +199,10 @@
                     <!--                    android:layout_marginLeft="25dp"-->
                     <TextView
                         android:id="@+id/number_text"
-                        android:fontFamily="@font/gmarketl"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
+                        android:fontFamily="@font/gmarketl"
                         android:gravity="center"
                         android:text="플로깅 총 횟수" />
                 </LinearLayout>
@@ -217,20 +216,20 @@
 
                     <TextView
                         android:id="@+id/distance"
-                        android:fontFamily="@font/gmarketm"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="4"
+                        android:fontFamily="@font/gmarketm"
                         android:gravity="center"
                         android:text=""
                         android:textSize="30sp" />
 
                     <TextView
                         android:id="@+id/distance_text"
-                        android:fontFamily="@font/gmarketl"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
+                        android:fontFamily="@font/gmarketl"
                         android:gravity="center"
                         android:text="총 거리" />
 

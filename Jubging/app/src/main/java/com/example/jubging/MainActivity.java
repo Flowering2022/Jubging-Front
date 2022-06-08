@@ -80,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
     private double mLatitude;
     private double mLongitude;
     private  double totalDistance=0;
+    MapPolyline polyline;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -105,18 +106,17 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
             checkRunTimePermission();
         }
 
+
         final ImageButton btn = (ImageButton) findViewById(R.id.trc);
         btn.bringToFront();
 
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 MapPointBounds mapPointBounds = new MapPointBounds();
                 MapPoint mapPoint = MapPoint.mapPointWithGeoCoord(mLatitude, mLongitude);
                 mapPointBounds.add(mapPoint);
                 mapView.moveCamera(CameraUpdateFactory.newMapPointBounds(mapPointBounds));
-
 
             }
         });
@@ -142,14 +142,19 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
                 btn_finish.setVisibility(View.VISIBLE); //운동완료 버튼 보이기
                 btn_finish.setEnabled(true); //운동완료버튼 활성화
                 btn_finish.setText("플로깅 완료하기"); //버튼 내 택스트 변경
+
+
             }
         });
 
         btn_finish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Intent intent = new Intent(getApplicationContext(), FinishActivity.class);
                 startActivity(intent);
+
+                finish();
             }
         });
 //        //Post.. url을 못가져와서 인가..
@@ -377,13 +382,9 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
             }
         }).start();
 
-        MapPolyline polyline = new MapPolyline();
+        polyline = new MapPolyline();
         polyline.setTag(1000);
         polyline.setLineColor(Color.argb(255, 255, 51, 0)); // Polyline 컬러 지정.
-
-
-        // Polyline 지도에 올리기.
-        mapView.addPolyline(polyline);
 
         CancellationTokenSource cts = new CancellationTokenSource();
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
