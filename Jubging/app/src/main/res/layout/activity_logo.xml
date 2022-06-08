@@ -9,29 +9,30 @@
 
     <ImageView
         android:id="@+id/logoimg"
-        android:layout_width="413dp"
-        android:layout_height="731dp"
+        android:layout_width="483dp"
+        android:layout_height="937dp"
         android:src="@drawable/logo"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.277"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.407" />
 
     <TextView
         android:id="@+id/logo_text"
-        android:layout_width="233dp"
-        android:layout_height="180dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:fontFamily="@font/windsong"
-        android:text="\t \tJubging"
+        android:text=" Jubging"
         android:textColor="@color/white"
         android:textSize="100sp"
         app:layout_constraintBottom_toBottomOf="@+id/logoimg"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.443"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/logoimg"
-        app:layout_constraintVertical_bias="0.272" />
+        app:layout_constraintVertical_bias="0.24" />
 
     <TextView
         android:id="@+id/logo_text_Jubging"
