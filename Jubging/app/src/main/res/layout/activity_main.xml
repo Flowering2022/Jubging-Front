@@ -61,30 +61,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!--            <LinearLayout-->
-        <!--                android:id="@+id/handle"-->
-        <!--                android:layout_width="match_parent"-->
-        <!--                android:layout_height="match_parent"-->
-        <!--                android:gravity="bottom"-->
-        <!--                android:orientation="vertical">-->
-        <!--                <TextView-->
-        <!--                    android:layout_width="wrap_content"-->
-        <!--                    android:layout_height="0dp"-->
-        <!--                    android:layout_weight="3">-->
-
-        <!--                </TextView>-->
-        <!--                <ToggleButton-->
-        <!--                    android:id="@+id/pause"-->
-        <!--                    android:layout_width="70dp"-->
-        <!--                    android:layout_height="70dp"-->
-
-        <!--                    android:layout_gravity="right"-->
-        <!--                    android:layout_marginRight="10dp"-->
-        <!--                    android:layout_alignParentRight="true"-->
-        <!--                    android:layout_above="@id/exercise_view"-->
-        <!--                    android:text="pause" />-->
-
-
         <!--슬라이딩 화면의 handle-->
         <!--클릭 또는 눌러서 올리거나 내리면 슬라이딩 화면이 움직임-->
 
@@ -93,7 +69,6 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_gravity="bottom"
-            android:visibility="invisible"
             android:text="운동기록보기" />
         <!--        </LinearLayout>-->
 
