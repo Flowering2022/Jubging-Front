@@ -1,46 +1,28 @@
 package com.example.jubging;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.graphics.Point;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.widget.AppCompatImageButton;
-import androidx.appcompat.widget.AppCompatImageView;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Looper;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.webkit.WebView;
-import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -51,9 +33,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.CancellationTokenSource;
 import com.google.android.gms.tasks.OnSuccessListener;
 
-import net.daum.mf.map.api.CalloutBalloonAdapter;
 import net.daum.mf.map.api.CameraUpdateFactory;
-import net.daum.mf.map.api.MapCircle;
 import net.daum.mf.map.api.MapPoint;
 import net.daum.mf.map.api.MapPointBounds;
 import net.daum.mf.map.api.MapPolyline;
@@ -71,8 +51,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MapView.CurrentLocationEventListener, MapView.MapViewEventListener, MapView.POIItemEventListener
 {
@@ -136,15 +114,8 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
             }
         });
 
-//        final Button nextbtn = (Button)findViewById(R.id.next);
-//        nextbtn.setOnClickListener(new View.OnClickListener(){
-//            @Override
-//            public void onClick(View view) {
-//
-//                Intent intent = new Intent(MainActivity.this, MainActivity2.class);
-//                startActivity(intent);
-//            }
-//        });
+        final ImageButton plogingst = (ImageButton)findViewById(R.id.btn_pause);
+        plogingst.bringToFront();
 
 
         final ImageButton button = (ImageButton) findViewById(R.id.location_Btn);
@@ -172,8 +143,8 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
                                 distance(latitude, longitude, current_latitude, current_longitude, "kilometer");
 
 
-                        // 현재 위치에서 부터 3km거리 안에 있는 마커만 표시하기
-                        if(distanceKiloMeter < 3) {
+                        // 현재 위치에서 부터 1.5km거리 안에 있는 마커만 표시하기
+                        if(distanceKiloMeter < 1.5) {
                             MapPoint tempmapPoint = MapPoint.mapPointWithGeoCoord(latitude, longitude);
                             marker[i] = new MapPOIItem();
                             marker[i].setTag(100);
@@ -195,18 +166,6 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
             }
         });
 
-
-//        final ToggleButton plogging_tb = (ToggleButton)this.findViewById(R.id.plogging_btn);
-//        plogging_tb.setOnClickListener(new View.OnClickListener(){
-//            @Override
-//            public void onClick(View view) {
-//                if(plogging_tb.isChecked()){
-//                    plogging_tb.setBackgroundDrawable(getResources().getDrawable(R.drawable.start));
-//                }else{
-//                    plogging_tb.setBackgroundDrawable(getResources().getDrawable(R.drawable.pause));
-//                }
-//            }
-//        });
 
 
 
@@ -338,7 +297,7 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
                 trackingMarker.setTag(0);
                 trackingMarker.setMapPoint(MapPoint.mapPointWithGeoCoord(mLatitude,mLongitude));
                 trackingMarker.setMarkerType(MapPOIItem.MarkerType.CustomImage);// 마커타입을 커스텀 마커로 지정.
-                trackingMarker.setCustomImageResourceId(R.drawable.abcde); // 마커 이미지.
+                trackingMarker.setCustomImageResourceId(R.drawable.userimg); // 마커 이미지.
                 mapView.addPOIItem(trackingMarker);
                 // Polyline 좌표 지정.
                 polyline.addPoint(MapPoint.mapPointWithGeoCoord(mLatitude, mLongitude));
