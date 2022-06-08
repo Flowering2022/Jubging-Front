@@ -81,9 +81,12 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
     JSONArray jsonArray;
     private PermissionSupport permission;
 
-    private Button btn_finish, btn_pause;
-    private TextView number, distance;
-    private int count = 0;
+//    private Button btn_finish, btn_pause;
+//    private TextView number, distance;
+//    private int count = 0;
+
+//    private int a=0;
+//    private int b=0;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -118,7 +121,8 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
             }
         });
 
-    //서버 연결헤서 데이터 가져오기
+        ////////////////////////////////////////////
+        //서버 연결헤서 데이터 가져오기
         //Retrofit 인스턴스 생성
         retrofit2.Retrofit retrofit = new retrofit2.Retrofit.Builder()
                 .baseUrl("http://ec2-52-79-240-128.ap-northeast-2.compute.amazonaws.com/") //baseUrl
@@ -127,6 +131,70 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
 
         RetrofitInterface service = retrofit.create(RetrofitInterface.class); //RetrofitInterface 겍체 구현
 
+//        Button btn_finish = findViewById(R.id.btn_finish); //전송 버튼
+//
+//        Button btn_pause = findViewById(R.id.btn_pause);
+//        btn_pause.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                btn_pause.setVisibility(View.INVISIBLE); //시작버튼 누르면 시작버튼 없애기
+//                btn_finish.setVisibility(View.VISIBLE); //운동완료
+//
+//
+//                // 버튼 보이기
+//                btn_finish.setEnabled(true); //운동완료버튼 활성화
+//                btn_finish.setText("플로깅 완료하기"); //버튼 내 택스트 변경
+//            }
+//        });
+
+//        btn_finish.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                btn_finish.setText("오늘도 지구를 지키셨습니다!"); //버튼 내 택스트 변경
+//                btn_pause.setVisibility(View.VISIBLE); //시작 버튼 보이기
+//                btn_finish.setEnabled(false); //운동완료버튼 비활성화
+
+
+        //서버 주소/1 전달
+        Call<DataClass> call = service.getName("1");
+
+        call.enqueue(new Callback<DataClass>() {
+            @Override
+            public void onResponse(Call<DataClass> call, Response<DataClass> response) {
+                if (response.isSuccessful()) {
+                    DataClass result = response.body();
+
+                    //서버에서 응답방은 데이터를 TextView에 넣어준다.
+                    TextView distance__sum = findViewById(R.id.distance);
+                    TextView plogging_freq = findViewById(R.id.number);
+
+//                    a = result.distance__sum;
+//                    b = result.plogging_freq;
+
+                    distance__sum.setText(result.distance__sum + "");
+                    plogging_freq.setText(result.plogging_freq + "");
+
+                } else {
+                    //실패
+                }
+            }
+
+            @Override
+            public void onFailure(Call<DataClass> call, Throwable t) {
+                //통신 실패
+            }
+        });
+        ///////////////////////////////////////
+
+    //서버 연결헤서 데이터 가져오기
+        //Retrofit 인스턴스 생성
+        retrofit2.Retrofit retrofit1 = new retrofit2.Retrofit.Builder()
+                .baseUrl("http://ec2-52-79-240-128.ap-northeast-2.compute.amazonaws.com/") //baseUrl
+                .addConverterFactory(GsonConverterFactory.create()) //JSON을 변환해줄 Gson 변환기 등록
+                .build();
+
+        RetrofitInterface service1 = retrofit.create(RetrofitInterface.class); //RetrofitInterface 겍체 구현
+
         Button btn_finish = findViewById(R.id.btn_finish); //전송 버튼
 
         Button btn_pause = findViewById(R.id.btn_pause);
@@ -134,7 +202,9 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
             @Override
             public void onClick(View v) {
                 btn_pause.setVisibility(View.INVISIBLE); //시작버튼 누르면 시작버튼 없애기
-                btn_finish.setVisibility(View.VISIBLE); //운동완료 버튼 보이기
+                btn_finish.setVisibility(View.VISIBLE); //운동완료
+
+                // 버튼 보이기
                 btn_finish.setEnabled(true); //운동완료버튼 활성화
                 btn_finish.setText("플로깅 완료하기"); //버튼 내 택스트 변경
             }
@@ -160,6 +230,9 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
                             TextView distance__sum = findViewById(R.id.distance);
                             TextView plogging_freq = findViewById(R.id.number);
 
+//                            a=result.distance__sum;
+//                            b=result.plogging_freq;
+
                             distance__sum.setText(result.distance__sum+"");
                             plogging_freq.setText(result.plogging_freq+"");
 
@@ -175,6 +248,10 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
                 });
             }
         });
+
+//        TextView number = findViewById(R.id.number);
+//        number.setText(a);
+
 //        //Post.. url을 못가져와서 인가..
 //        Call<List<JsonPlaceHOlderApi.Post>> call = jsonPlaceHOlderApi.getPosts();
 //
