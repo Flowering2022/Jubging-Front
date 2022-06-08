@@ -51,10 +51,10 @@
     <SlidingDrawer
         android:id="@+id/slidingdrawer"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="340dp"
         android:layout_alignParentBottom="true"
         android:allowSingleTap="true"
-        android:bottomOffset="5dp"
+        android:bottomOffset="-10dp"
         android:content="@+id/exercise_content"
         android:handle="@+id/exercise_handle"
         android:orientation="vertical"
@@ -66,10 +66,13 @@
 
         <Button
             android:id="@+id/exercise_handle"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_gravity="bottom"
-            android:text="운동기록보기" />
+            android:layout_width="300dp"
+            android:layout_height="30dp"
+            android:background="@drawable/finish_btn"
+            android:text="운동기록보기"
+            android:textSize="10sp"
+            android:fontFamily="@font/gmarketm"
+            tools:visibility="gone" />
         <!--        </LinearLayout>-->
 
         <!--슬라이딩 화면이 올라갔을 때 등장하는 화면-->
@@ -96,15 +99,18 @@
 
                     <TextView
                         android:id="@+id/time"
+                        android:fontFamily="@font/gmarketm"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="4"
                         android:gravity="center"
-                        android:text="시간"
-                        android:textSize="20sp" />
+                        android:text="0:0"
+                        android:textSize="30sp"
+                        android:textAlignment="center"/>
 
                     <TextView
                         android:id="@+id/time_text"
+                        android:fontFamily="@font/gmarketl"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
@@ -122,20 +128,23 @@
 
                     <TextView
                         android:id="@+id/km"
+                        android:fontFamily="@font/gmarketm"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="4"
                         android:gravity="center"
-                        android:text="킬로미터"
-                        android:textSize="20sp" />
+                        android:text="0m"
+                        android:textAlignment="center"
+                        android:textSize="30sp" />
 
                     <TextView
                         android:id="@+id/km_text"
+                        android:fontFamily="@font/gmarketl"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:text="킬로미터" />
+                        android:text="미터" />
 
                 </LinearLayout>
 
@@ -148,15 +157,17 @@
 
                     <TextView
                         android:id="@+id/fast"
+                        android:fontFamily="@font/gmarketm"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="4"
                         android:gravity="center"
-                        android:text="속력"
-                        android:textSize="20sp" />
+                        android:text="0"
+                        android:textSize="30sp" />
 
                     <TextView
                         android:id="@+id/fast_text"
+                        android:fontFamily="@font/gmarketl"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
@@ -183,16 +194,18 @@
 
                     <TextView
                         android:id="@+id/number"
+                        android:fontFamily="@font/gmarketm"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="4"
                         android:gravity="center"
-                        android:text="플로깅 총 횟수"
-                        android:textSize="20sp" />
+                        android:text=""
+                        android:textSize="30sp" />
                     <!--                    android:layout_marginRight="20dp"-->
                     <!--                    android:layout_marginLeft="25dp"-->
                     <TextView
                         android:id="@+id/number_text"
+                        android:fontFamily="@font/gmarketl"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
@@ -209,20 +222,22 @@
 
                     <TextView
                         android:id="@+id/distance"
+                        android:fontFamily="@font/gmarketm"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="4"
                         android:gravity="center"
-                        android:text="총 거리"
-                        android:textSize="20sp" />
+                        android:text=""
+                        android:textSize="30sp" />
 
                     <TextView
                         android:id="@+id/distance_text"
+                        android:fontFamily="@font/gmarketl"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:text="총거리" />
+                        android:text="총 거리" />
 
                 </LinearLayout>
 
@@ -233,12 +248,16 @@
                 android:id="@+id/finish_view"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
+                android:gravity="center"
                 android:layout_weight="1">
 
                 <Button
                     android:id="@+id/btn_finish"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:fontFamily="@font/gmarketm"
+                    android:layout_width="300dp"
+                    android:layout_height="36dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/finish_btn"
                     android:gravity="center"
                     android:text="플로깅 완료하기"
                     android:visibility="invisible" />
