@@ -98,6 +98,8 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
 
     private Boolean isRunning = true;
     String timestr = "";
+    int intentdinstance;
+    String intentspeed = "";
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -252,105 +254,6 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
 
             }
         });
-//        //Post.. url을 못가져와서 인가..
-//        Call<List<JsonPlaceHOlderApi.Post>> call = jsonPlaceHOlderApi.getPosts();
-//
-//        call.enqueue(new Callback<List<JsonPlaceHOlderApi.Post>>() {
-//            @Override
-//            public void onResponse(Call<List<JsonPlaceHOlderApi.Post>> call, Response<List<JsonPlaceHOlderApi.Post>> response) {
-//                if (!response.isSuccessful())
-//                {
-//                    distance.setText("Code: " + response.code());
-//                    return;
-//                }
-//
-//                List<JsonPlaceHOlderApi.Post> posts = response.body();
-//
-//                for (JsonPlaceHOlderApi.Post post : posts) {
-//                    String content ="";
-//                    content += "Distance : " + post.getDistance__sum() + "\n";
-//
-//                    distance.append(content);
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<List<JsonPlaceHOlderApi.Post>> call, Throwable t) {
-//                distance.setText(t.getMessage());
-//            }
-//        });
-////////////////////////////////////////////////////////////////////////////////
-//        //화면 전환 버튼 동작
-//        //Button btn_finish = (Button) findViewById(R.id.btn_finish);
-//        btn_finish = findViewById(R.id.btn_finish);
-//        btn_finish.setOnClickListener(new View.OnClickListener(){
-//            @Override
-//            public void onClick(View view){
-//                Intent intent = new Intent(getApplicationContext(), CompleteActivity.class);
-//                startActivity(intent);
-//            }
-//        });
-/////////////////////////////////////////////////////////////////////////////////
-//        //플로깅 총 횟수
-//        number = findViewById(R.id.number);
-//        number.setText(count+"");
-//        btn_finish = findViewById(R.id.btn_finish);
-//        btn_finish.setOnClickListener(new View.OnClickListener() {
-////            @Override
-////            public void onClick(View v) {
-////                while (count >= 0) {
-////                    count++;
-////                    btn_count.setText(count + "");
-////                }
-//                @Override
-//                public void onClick(View v) {
-//                    if (count == 0){
-//                        count++;
-//                    }
-//                    else {
-//                        number.setText(count + "");
-//                        count++;
-//                    }
-//
-////                if (count %2 == 1) {
-////                    btn_count.setText(count + "");//1 //3
-////                    count++;//2 //4
-////                }
-//
-////               if (count ==0){
-////                    count++; //1
-////                } else if (count == 1) {
-////                    btn_count.setText(count + ""); //1
-////                    count++; //2
-////                }
-////                else if(count==2){
-////                    count++; //3
-////                }
-////                else if (count == 3) {
-////                    count-=1; //2
-////                    btn_count.setText(count + ""); //2
-////                    count += 2; //4
-////                }
-////                else if (count ==4){
-////                    count++; //5
-////                }
-////                else if (count ==5){
-////                   count-=2; //3
-////                   btn_count.setText(count + ""); //3
-////                   count += 3; //6
-////               }
-////               else if (count ==6){
-////                   count++; //7
-////               }
-////               else if (count ==7){
-////                   count-=3; //4
-////                   btn_count.setText(count + ""); //4
-////                   count += 4; //8
-////               }
-//
-//            }
-//        });
-
 
         final ImageButton button = (ImageButton) findViewById(R.id.location_Btn);
         button.bringToFront();
@@ -535,11 +438,21 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
                 Log.d("구글", "onLocationResult 시간: "+(recentTime-startTime)/1000/3600+"h"+(recentTime-startTime)/1000/60%60+"m"+(recentTime-startTime)/1000%60+"s");
                 Log.d("구글", "onLocationResult 속력: "+totalDistance/((recentTime-startTime)/1000)+"m/h");
 
+                double tempspeed = (totalDistance)/(((recentTime) -startTime)/1000);
 
-                double tempspeed = totalDistance/((recentTime-startTime)/1000);
-                int total = Integer.parseInt(String.valueOf(Math.floor(totalDistance)));
-                String speed = String.format("%.6f", tempspeed);
-                plodistance.setText(total+"m");
+                if(Double.isNaN(tempspeed)){
+                    tempspeed = 0.001;
+                }
+
+                String speed = String.format("%.1f", tempspeed);
+
+                Log.d("구글", "tempspeed: "+tempspeed);
+
+
+                intentdinstance = (int)totalDistance;
+                intentspeed = speed;
+
+                plodistance.setText(((int)totalDistance)+"m");
                 plospeed.setText(speed+"m/h");
 
                 // Log.d("구글", "onLocationResult: "+location.);

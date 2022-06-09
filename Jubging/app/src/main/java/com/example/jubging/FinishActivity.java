@@ -83,7 +83,8 @@ public class FinishActivity extends AppCompatActivity implements MapView.Current
     private  double totalDistance=0;
     MapPolyline polyline;
     String endtime = "";
-
+    String totalspeed = "";
+    int totaldistance;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -95,6 +96,8 @@ public class FinishActivity extends AppCompatActivity implements MapView.Current
 
 
         endtime = ((MainActivity)MainActivity.context_main).timestr;
+        totalspeed = ((MainActivity)MainActivity.context_main).intentspeed;
+        totaldistance = ((MainActivity)MainActivity.context_main).intentdinstance;
 
         //지도를 띄우자
         // java code
@@ -114,6 +117,12 @@ public class FinishActivity extends AppCompatActivity implements MapView.Current
 
         final TextView showtime = (TextView)findViewById(R.id.endtime);
         showtime.setText(endtime);
+
+        final TextView showdistance = (TextView)findViewById(R.id.km);
+        showdistance.setText(totaldistance+"m");
+
+        final TextView showspeed = (TextView)findViewById(R.id.fast);
+        showspeed.setText(totalspeed+"m/h");
 
 
         //서버 연결헤서 데이터 가져오기
