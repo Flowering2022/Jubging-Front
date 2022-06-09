@@ -30,215 +30,214 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/finish_logo" />
 
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/map_view"
+        android:layout_width="350dp"
+        android:layout_height="254dp"
+        android:layout_marginTop="152dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.491"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <ImageButton
         android:id="@+id/restart"
         android:layout_width="68dp"
         android:layout_height="68dp"
-        android:layout_marginBottom="140dp"
+        android:layout_marginBottom="80dp"
         android:background="#00FFFFFF"
         android:src="@drawable/restart"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.294"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <SlidingDrawer
-        android:id="@+id/slidingdrawer"
-        android:layout_width="match_parent"
-        android:layout_height="340dp"
-        android:layout_alignParentBottom="true"
-        android:allowSingleTap="true"
-        android:bottomOffset="-10dp"
-        android:content="@+id/exercise_content"
-        android:handle="@+id/exercise_handle"
-        android:orientation="vertical"
+    <ImageButton
+        android:id="@+id/location_btn"
+        android:layout_width="68dp"
+        android:layout_height="68dp"
+        android:layout_marginBottom="80dp"
+        android:src="@drawable/map"
+        android:background="#00FFFFFF"
+        android:text="button"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.766"
+        app:layout_constraintStart_toStartOf="parent" />
 
-        <!--슬라이딩 화면의 handle-->
-        <!--클릭 또는 눌러서 올리거나 내리면 슬라이딩 화면이 움직임-->
+    <LinearLayout
+        android:id="@+id/exercise_content"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:orientation="vertical"
+        android:layout_marginTop="180dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <Button
-            android:id="@+id/exercise_handle"
-            android:layout_width="300dp"
-            android:layout_height="30dp"
-            android:background="@drawable/finishlogo_btn"
-            android:fontFamily="@font/gmarketm"
-            android:text="운동기록보기"
-            android:textSize="10sp"
-            tools:visibility="gone" />
-        <!--        </LinearLayout>-->
-
-        <!--슬라이딩 화면이 올라갔을 때 등장하는 화면-->
         <LinearLayout
-            android:id="@+id/exercise_content"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="#E6ffffff"
-            android:orientation="vertical">
+            android:id="@+id/time_km_fast_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:orientation="horizontal">
 
             <LinearLayout
-                android:id="@+id/time_km_fast_view"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="2"
-                android:orientation="horizontal">
+                android:id="@+id/time_view"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-                <LinearLayout
-                    android:id="@+id/time_view"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
+                <TextView
+                    android:id="@+id/endtime"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="4"
+                    android:fontFamily="@font/gmarketm"
+                    android:gravity="center"
+                    android:text="0:0"
+                    android:textAlignment="center"
+                    android:textSize="30sp" />
+
+                <TextView
+                    android:id="@+id/time_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/time"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="4"
-                        android:fontFamily="@font/gmarketm"
-                        android:gravity="center"
-                        android:text="0:0"
-                        android:textAlignment="center"
-                        android:textSize="30sp" />
-
-                    <TextView
-                        android:id="@+id/time_text"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:fontFamily="@font/gmarketl"
-                        android:gravity="center"
-                        android:text="시간" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/km_view"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/km"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="4"
-                        android:fontFamily="@font/gmarketm"
-                        android:gravity="center"
-                        android:text="0m"
-                        android:textAlignment="center"
-                        android:textSize="30sp" />
-
-                    <TextView
-                        android:id="@+id/km_text"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:fontFamily="@font/gmarketl"
-                        android:gravity="center"
-                        android:text="미터" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/fast_view"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/fast"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="4"
-                        android:fontFamily="@font/gmarketm"
-                        android:gravity="center"
-                        android:text="0"
-                        android:textSize="30sp" />
-
-                    <TextView
-                        android:id="@+id/fast_text"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:fontFamily="@font/gmarketl"
-                        android:gravity="center"
-                        android:text="속력" />
-
-                </LinearLayout>
+                    android:fontFamily="@font/gmarketl"
+                    android:gravity="center"
+                    android:text="시간" />
 
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/number_distance_view"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="2"
-                android:orientation="horizontal">
+                android:id="@+id/km_view"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-                <LinearLayout
-                    android:id="@+id/number_view"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
+                <TextView
+                    android:id="@+id/km"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="4"
+                    android:fontFamily="@font/gmarketm"
+                    android:gravity="center"
+                    android:text="0m"
+                    android:textAlignment="center"
+                    android:textSize="30sp" />
+
+                <TextView
+                    android:id="@+id/km_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:fontFamily="@font/gmarketl"
+                    android:gravity="center"
+                    android:text="미터" />
 
-                    <TextView
-                        android:id="@+id/number"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="4"
-                        android:fontFamily="@font/gmarketm"
-                        android:gravity="center"
-                        android:text=""
-                        android:textSize="30sp" />
-                    <!--                    android:layout_marginRight="20dp"-->
-                    <!--                    android:layout_marginLeft="25dp"-->
-                    <TextView
-                        android:id="@+id/number_text"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:fontFamily="@font/gmarketl"
-                        android:gravity="center"
-                        android:text="플로깅 총 횟수" />
-                </LinearLayout>
+            </LinearLayout>
 
-                <LinearLayout
-                    android:id="@+id/distance_view"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
+            <LinearLayout
+                android:id="@+id/fast_view"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/fast"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="4"
+                    android:fontFamily="@font/gmarketm"
+                    android:gravity="center"
+                    android:text="0"
+                    android:textSize="30sp" />
+
+                <TextView
+                    android:id="@+id/fast_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/distance"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="4"
-                        android:fontFamily="@font/gmarketm"
-                        android:gravity="center"
-                        android:text=""
-                        android:textSize="30sp" />
-
-                    <TextView
-                        android:id="@+id/distance_text"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:fontFamily="@font/gmarketl"
-                        android:gravity="center"
-                        android:text="총 거리" />
-
-                </LinearLayout>
+                    android:fontFamily="@font/gmarketl"
+                    android:gravity="center"
+                    android:text="속력" />
 
             </LinearLayout>
 
         </LinearLayout>
-    </SlidingDrawer>
+
+        <LinearLayout
+            android:id="@+id/number_distance_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/number_view"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/number"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="4"
+                    android:fontFamily="@font/gmarketm"
+                    android:gravity="center"
+                    android:text=""
+                    android:textSize="30sp" />
+                <!--                    android:layout_marginRight="20dp"-->
+                <!--                    android:layout_marginLeft="25dp"-->
+                <TextView
+                    android:id="@+id/number_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/gmarketl"
+                    android:gravity="center"
+                    android:text="플로깅 총 횟수" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/distance_view"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/distance"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="4"
+                    android:fontFamily="@font/gmarketm"
+                    android:gravity="center"
+                    android:text=""
+                    android:textSize="30sp" />
+
+                <TextView
+                    android:id="@+id/distance_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/gmarketl"
+                    android:gravity="center"
+                    android:text="총 거리" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
