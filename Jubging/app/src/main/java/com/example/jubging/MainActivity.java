@@ -4,7 +4,9 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -17,7 +19,9 @@ import android.os.Bundle;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,6 +50,7 @@ import net.daum.mf.map.api.MapPOIItem;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -53,6 +58,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Date;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -63,6 +69,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity implements MapView.CurrentLocationEventListener, MapView.MapViewEventListener, MapView.POIItemEventListener
 {
+    public static Context context_main;
+
     private static final String LOG_TAG = "MainActivity";
     private static final int PRIORITY_HIGH_ACCURACY = LocationRequest.PRIORITY_HIGH_ACCURACY;
     private MapView mapView;
@@ -81,6 +89,15 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
     private double mLongitude;
     private  double totalDistance=0;
     MapPolyline polyline;
+    private int startTime=0;
+    private int recentTime=0;
+    private boolean ploggingStart=false;
+
+    private TextView time, plodistance, plospeed;
+    private Thread timeThread = null;
+
+    private Boolean isRunning = true;
+    String timestr = "";
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -89,6 +106,7 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
 
         setContentView(R.layout.activity_main);
 
+        context_main = this;
 
         //지도를 띄우자
         // java code
@@ -98,6 +116,62 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
         mapView.setMapViewEventListener(this);
         mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading);
         mapView.setCustomCurrentLocationMarkerTrackingImage(R.drawable.blank, new MapPOIItem.ImageOffset(16, 16));
+
+        // 시간 TextView
+        time = (TextView)findViewById(R.id.runtime);
+        // 거리 TextView
+        plodistance = (TextView)findViewById(R.id.km);
+        // 속력 TextView
+        plospeed= (TextView)findViewById(R.id.fast);
+
+
+        @SuppressLint("HandlerLeak")
+        Handler handler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                int mSec = msg.arg1 % 100;
+                int sec = (msg.arg1 / 100) % 60;
+                int min = (msg.arg1 / 100) / 60;
+                int hour = (msg.arg1 / 100) / 360;
+                //1000이 1초 1000*60 은 1분 1000*60*10은 10분 1000*60*60은 한시간
+
+                @SuppressLint("DefaultLocale") String result = String.format("%02d:%02d", min, sec);
+                if (result.equals("00:01:15:00")) {
+                    Toast.makeText(MainActivity.this, "1분 15초가 지났습니다.", Toast.LENGTH_SHORT).show();
+                }
+                time.setText(result);
+                timestr = result;
+            }
+        };
+
+        class timeThread implements Runnable {
+            @Override
+            public void run() {
+                int i = 0;
+
+                while (true) {
+                    while (isRunning) { //일시정지를 누르면 멈춤
+                        Message msg = new Message();
+                        msg.arg1 = i++;
+                        handler.sendMessage(msg);
+
+                        try {
+                            Thread.sleep(10);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                            runOnUiThread(new Runnable(){
+                                @Override
+                                public void run() {
+                                    time.setText("");
+                                    time.setText("00:00");
+                                }
+                            });
+                            return; // 인터럽트 받을 경우 return
+                        }
+                    }
+                }
+            }
+        }
 
         trackingMarker= new MapPOIItem();
         if (!checkLocationServicesStatus()) {
@@ -132,8 +206,12 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
 
         final Button btn_finish = findViewById(R.id.btn_finish); //전송 버튼
 
+        //운동 시작
         final ImageButton btn_pause = findViewById(R.id.btn_pause);
         btn_pause.bringToFront();
+        final TextView time = (TextView)findViewById(R.id.runtime);
+        final TextView distan = (TextView)findViewById(R.id.km);
+
 
         btn_pause.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -143,18 +221,35 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
                 btn_finish.setEnabled(true); //운동완료버튼 활성화
                 btn_finish.setText("플로깅 완료하기"); //버튼 내 택스트 변경
 
+                if(!ploggingStart){
+                    ploggingStart=true;
+                    startTime= (int) System.currentTimeMillis();
 
+                }
+
+
+                timeThread = new Thread(new timeThread());
+                timeThread.start();
             }
         });
+
 
         btn_finish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
+                isRunning = true;
+                mapViewContainer.removeAllViews();
+
                 Intent intent = new Intent(getApplicationContext(), FinishActivity.class);
                 startActivity(intent);
 
-                finish();
+                if(ploggingStart){
+                    ploggingStart=false;
+                    mapView.removeAllPolylines();
+                    mapView.removePOIItem(trackingMarker);
+                }
+
             }
         });
 //        //Post.. url을 못가져와서 인가..
@@ -420,28 +515,47 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
                     return;
                 }
                 Location location = locationResult.getLastLocation();
-                if(mLatitude != 0 && mLongitude != 0){
-                    totalDistance+= distance(mLatitude,mLongitude,location.getLatitude(),location.getLongitude(),"meter");
+                if(ploggingStart){
+                    recentTime= (int) System.currentTimeMillis();
+                    polyline.addPoint(MapPoint.mapPointWithGeoCoord(location.getLatitude(), location.getLongitude()));
+                    mapView.addPolyline(polyline);
+                    if(mLatitude != 0 && mLongitude != 0){
+                        totalDistance+= distance(mLatitude,mLongitude,location.getLatitude(),location.getLongitude(),"meter");
+                    }
                 }
+
+
                 mLatitude=location.getLatitude();
                 mLongitude=location.getLongitude();
                 Log.d("구글", "onLocationResult 위도: "+mLatitude);
                 Log.d("구글", "onLocationResult 경도: "+mLongitude);
                 Log.d("구글", "onLocationResult 거리: "+totalDistance);
+                Log.d("구글", "onLocationResult 시작 시간: "+new Date(startTime));
+                Log.d("구글", "onLocationResult 최근 시간: "+new Date(recentTime));
+                Log.d("구글", "onLocationResult 시간: "+(recentTime-startTime)/1000/3600+"h"+(recentTime-startTime)/1000/60%60+"m"+(recentTime-startTime)/1000%60+"s");
+                Log.d("구글", "onLocationResult 속력: "+totalDistance/((recentTime-startTime)/1000)+"m/h");
+
+
+                double tempspeed = totalDistance/((recentTime-startTime)/1000);
+                int total = Integer.parseInt(String.valueOf(Math.floor(totalDistance)));
+                String speed = String.format("%.6f", tempspeed);
+                plodistance.setText(total+"m");
+                plospeed.setText(speed+"m/h");
+
                 // Log.d("구글", "onLocationResult: "+location.);
                 mapView.removePOIItem(trackingMarker);
-                trackingMarker.setItemName("trackinMarker");
+                trackingMarker.setItemName("현재 위치");
                 trackingMarker.setTag(0);
                 trackingMarker.setMapPoint(MapPoint.mapPointWithGeoCoord(mLatitude,mLongitude));
                 trackingMarker.setMarkerType(MapPOIItem.MarkerType.CustomImage);// 마커타입을 커스텀 마커로 지정.
                 trackingMarker.setCustomImageResourceId(R.drawable.userimg); // 마커 이미지.
                 mapView.addPOIItem(trackingMarker);
-                // Polyline 좌표 지정.
-                polyline.addPoint(MapPoint.mapPointWithGeoCoord(mLatitude, mLongitude));
-                mapView.addPolyline(polyline);
+
             }
         };
+
         //fusedLocationClient.requestLocationUpdates(locationRequest, mLocationCallback, Looper.myLooper());
+
 
 
     }
@@ -690,4 +804,5 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
 
 
 }
+
 
