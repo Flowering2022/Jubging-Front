@@ -53,14 +53,17 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.DatagramPacket;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.w3c.dom.Text;
 
+import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -122,7 +125,12 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
         });
 
         ////////////////////////////////////////////
+        //기본화면
         //서버 연결헤서 데이터 가져오기
+//        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+//        logging.setLevel(Level.BODY);
+//        OkHttpClient httpClient = new OkHttpClient();
+//        httpClient.interceptors().add(logging);
         //Retrofit 인스턴스 생성
         retrofit2.Retrofit retrofit = new retrofit2.Retrofit.Builder()
                 .baseUrl("http://ec2-52-79-240-128.ap-northeast-2.compute.amazonaws.com/") //baseUrl
@@ -131,30 +139,7 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
 
         RetrofitInterface service = retrofit.create(RetrofitInterface.class); //RetrofitInterface 겍체 구현
 
-//        Button btn_finish = findViewById(R.id.btn_finish); //전송 버튼
 //
-//        Button btn_pause = findViewById(R.id.btn_pause);
-//        btn_pause.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                btn_pause.setVisibility(View.INVISIBLE); //시작버튼 누르면 시작버튼 없애기
-//                btn_finish.setVisibility(View.VISIBLE); //운동완료
-//
-//
-//                // 버튼 보이기
-//                btn_finish.setEnabled(true); //운동완료버튼 활성화
-//                btn_finish.setText("플로깅 완료하기"); //버튼 내 택스트 변경
-//            }
-//        });
-
-//        btn_finish.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                btn_finish.setText("오늘도 지구를 지키셨습니다!"); //버튼 내 택스트 변경
-//                btn_pause.setVisibility(View.VISIBLE); //시작 버튼 보이기
-//                btn_finish.setEnabled(false); //운동완료버튼 비활성화
-
-
         //서버 주소/1 전달
         Call<DataClass> call = service.getName("1");
 
@@ -164,12 +149,9 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
                 if (response.isSuccessful()) {
                     DataClass result = response.body();
 
-                    //서버에서 응답방은 데이터를 TextView에 넣어준다.
+                    //서버에서 응답받은 데이터를 TextView에 넣어준다.
                     TextView distance__sum = findViewById(R.id.distance);
                     TextView plogging_freq = findViewById(R.id.number);
-
-//                    a = result.distance__sum;
-//                    b = result.plogging_freq;
 
                     distance__sum.setText(result.distance__sum + "");
                     plogging_freq.setText(result.plogging_freq + "");
@@ -185,20 +167,24 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
             }
         });
         ///////////////////////////////////////
-
+//종료버튼 클릭시
     //서버 연결헤서 데이터 가져오기
         //Retrofit 인스턴스 생성
-        retrofit2.Retrofit retrofit1 = new retrofit2.Retrofit.Builder()
-                .baseUrl("http://ec2-52-79-240-128.ap-northeast-2.compute.amazonaws.com/") //baseUrl
-                .addConverterFactory(GsonConverterFactory.create()) //JSON을 변환해줄 Gson 변환기 등록
-                .build();
-
-        RetrofitInterface service1 = retrofit.create(RetrofitInterface.class); //RetrofitInterface 겍체 구현
+//        retrofit2.Retrofit retrofit1 = new retrofit2.Retrofit.Builder()
+//                .baseUrl("http://ec2-52-79-240-128.ap-northeast-2.compute.amazonaws.com/") //baseUrl
+//                .addConverterFactory(GsonConverterFactory.create()) //JSON을 변환해줄 Gson 변환기 등록
+//                .build();
+//
+//
+//        RetrofitInterface service1 = retrofit.create(RetrofitInterface.class); //RetrofitInterface 겍체 구현
 
         Button btn_finish = findViewById(R.id.btn_finish); //전송 버튼
 
-        Button btn_pause = findViewById(R.id.btn_pause);
+        Button btn_pause = findViewById(R.id.btn_pause); //시작버튼
+
+
         btn_pause.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
                 btn_pause.setVisibility(View.INVISIBLE); //시작버튼 누르면 시작버튼 없애기
@@ -207,6 +193,9 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
                 // 버튼 보이기
                 btn_finish.setEnabled(true); //운동완료버튼 활성화
                 btn_finish.setText("플로깅 완료하기"); //버튼 내 택스트 변경
+
+                //시작버튼 누르면 -> 시간 올라감
+
             }
         });
 
@@ -217,139 +206,137 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
                 btn_pause.setVisibility(View.VISIBLE); //시작 버튼 보이기
                 btn_finish.setEnabled(false); //운동완료버튼 비활성화
 
+                //GET
                 //서버 주소/1 전달
-                Call<DataClass> call = service.getName("1");
+//                Call<DataClass> call = service.getName("1");
+//
+//                call.enqueue(new Callback<DataClass>(){
+//                    @Override
+//                    public void onResponse(Call<DataClass> call, Response<DataClass> response){
+//                        if(response.isSuccessful()){
+//                            DataClass result = response.body();
+//
+//                            //서버에서 응답방은 데이터를 TextView에 넣어준다.
+//                            TextView distance__sum = findViewById(R.id.distance);
+//                            TextView plogging_freq = findViewById(R.id.number);
+//
+////                            a=result.distance__sum;
+////                            b=result.plogging_freq;
+//
+//                            distance__sum.setText(result.distance__sum+"");
+//                            plogging_freq.setText(result.plogging_freq+"");
+//
+//                        }
+//                        else{
+//                            //실패
+//                        }
+//                    }
+//                    @Override
+//                    public void onFailure(Call<DataClass> call, Throwable t){
+//                        //통신 실패
+//                    }
+//                });
 
-                call.enqueue(new Callback<DataClass>(){
+                //POST
+                //@Body 전송할 DTO 객체 생성
+                // 서버에 추가할 PostResult 객체 생성, id는 서버에서 자동으로 번호 지정되는 값이기에 설정x
+                //DataClass_Post post = new DataClass_Post();
+
+//                HashMap<String, Object> param = new HashMap<String, Object>();
+//
+//                param.put("userid", 1);
+//                param.put("distance", 53);
+//                param.put("runningtime", "11:11");
+//
+//                service.postData(param).enqueue(new Callback<DataClass_Post>(){
+//                    @Override
+//                    public void onResponse(@NonNull Call<DataClass_Post> call, @NonNull Response<DataClass_Post> response) {
+//
+//                        if(response.isSuccessful()) {  // 조회성공
+//
+//                            DataClass_Post data = response.body();
+//
+//                        }
+//                        else{
+//                        }
+//
+//                    }
+//
+//
+//
+//                    @Override
+//
+//                    public void onFailure(Call<DataClass_Post> call, Throwable t) {
+//
+//                        t.printStackTrace();
+//
+//                    }
+//                });
+
+                //1, 53, "12:34"
+                DataClass_Post post = new DataClass_Post(1, 53, "12:12");
+                //Call<DataClass> call = service.getName("1");
+                Call<DataClass_Post> call2 = service.postName(post);
+
+                call2.enqueue(new Callback<DataClass_Post>(){
                     @Override
-                    public void onResponse(Call<DataClass> call, Response<DataClass> response){
+                    public void onResponse(Call<DataClass_Post> call2, Response<DataClass_Post> response){
+                        Log.d("가나다", "1");
                         if(response.isSuccessful()){
-                            DataClass result = response.body();
+                            Log.d("가나다", "2");
+                            DataClass_Post result = response.body();
+                            Log.d("가나다", "3");
 
-                            //서버에서 응답방은 데이터를 TextView에 넣어준다.
-                            TextView distance__sum = findViewById(R.id.distance);
-                            TextView plogging_freq = findViewById(R.id.number);
-
-//                            a=result.distance__sum;
-//                            b=result.plogging_freq;
-
-                            distance__sum.setText(result.distance__sum+"");
-                            plogging_freq.setText(result.plogging_freq+"");
-
+//                            //서버에서 응답방은 데이터를 TextView에 넣어준다.
+//                            TextView time = findViewById(R.id.time);
+//                            TextView km = findViewById(R.id.km);
+//                            Log.d("가나다", "3");
+//
+//                            time.setText(result.runningtime+"");
+//                            km.setText(result.distance+"");
+//                            Log.d("가나다", "4");
                         }
                         else{
                             //실패
+                            Log.d("가나다", ("ERROR "+response.code()));
+                            Log.d("가나다", "4");
+
                         }
+                         if (!response.isSuccessful()) {
+                             Log.d("가나다", "5");
+                            //textViewResult.setText("code: " + response.code());
+                            return;
+
+                            }
+                            Log.d("가나다", "6");
+                        //if(response.isSuccessful()){
+                            DataClass_Post result = response.body();
+                        Log.d("가나다", "7");
+                            String content = "";
+                            //content += "Code : " + response.code() + "\n";
+                            //content += "Id: " + postResponse.getId() + "\n";
+                            content += "User Id: " + result.getUserid() + "\n";
+                            content += "Title: " + result.getDistance() + "\n";
+                            content += "Text: " + result.getRunningtime() + "\n";
+                        Log.d("가나다", "8");
+
+                            //textViewResult.setText(content);
+
+                        //}
+//                        else{
+//                            //실패
+//                        }
                     }
                     @Override
-                    public void onFailure(Call<DataClass> call, Throwable t){
+                    public void onFailure(Call<DataClass_Post> call2, Throwable t){
+                        Log.d("가나다", "9");
                         //통신 실패
                     }
                 });
             }
         });
 
-//        TextView number = findViewById(R.id.number);
-//        number.setText(a);
 
-//        //Post.. url을 못가져와서 인가..
-//        Call<List<JsonPlaceHOlderApi.Post>> call = jsonPlaceHOlderApi.getPosts();
-//
-//        call.enqueue(new Callback<List<JsonPlaceHOlderApi.Post>>() {
-//            @Override
-//            public void onResponse(Call<List<JsonPlaceHOlderApi.Post>> call, Response<List<JsonPlaceHOlderApi.Post>> response) {
-//                if (!response.isSuccessful())
-//                {
-//                    distance.setText("Code: " + response.code());
-//                    return;
-//                }
-//
-//                List<JsonPlaceHOlderApi.Post> posts = response.body();
-//
-//                for (JsonPlaceHOlderApi.Post post : posts) {
-//                    String content ="";
-//                    content += "Distance : " + post.getDistance__sum() + "\n";
-//
-//                    distance.append(content);
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<List<JsonPlaceHOlderApi.Post>> call, Throwable t) {
-//                distance.setText(t.getMessage());
-//            }
-//        });
-////////////////////////////////////////////////////////////////////////////////
-//        //화면 전환 버튼 동작
-//        //Button btn_finish = (Button) findViewById(R.id.btn_finish);
-//        btn_finish = findViewById(R.id.btn_finish);
-//        btn_finish.setOnClickListener(new View.OnClickListener(){
-//            @Override
-//            public void onClick(View view){
-//                Intent intent = new Intent(getApplicationContext(), CompleteActivity.class);
-//                startActivity(intent);
-//            }
-//        });
-/////////////////////////////////////////////////////////////////////////////////
-//        //플로깅 총 횟수
-//        number = findViewById(R.id.number);
-//        number.setText(count+"");
-//        btn_finish = findViewById(R.id.btn_finish);
-//        btn_finish.setOnClickListener(new View.OnClickListener() {
-////            @Override
-////            public void onClick(View v) {
-////                while (count >= 0) {
-////                    count++;
-////                    btn_count.setText(count + "");
-////                }
-//                @Override
-//                public void onClick(View v) {
-//                    if (count == 0){
-//                        count++;
-//                    }
-//                    else {
-//                        number.setText(count + "");
-//                        count++;
-//                    }
-//
-////                if (count %2 == 1) {
-////                    btn_count.setText(count + "");//1 //3
-////                    count++;//2 //4
-////                }
-//
-////               if (count ==0){
-////                    count++; //1
-////                } else if (count == 1) {
-////                    btn_count.setText(count + ""); //1
-////                    count++; //2
-////                }
-////                else if(count==2){
-////                    count++; //3
-////                }
-////                else if (count == 3) {
-////                    count-=1; //2
-////                    btn_count.setText(count + ""); //2
-////                    count += 2; //4
-////                }
-////                else if (count ==4){
-////                    count++; //5
-////                }
-////                else if (count ==5){
-////                   count-=2; //3
-////                   btn_count.setText(count + ""); //3
-////                   count += 3; //6
-////               }
-////               else if (count ==6){
-////                   count++; //7
-////               }
-////               else if (count ==7){
-////                   count-=3; //4
-////                   btn_count.setText(count + ""); //4
-////                   count += 4; //8
-////               }
-//
-//            }
-//        });
 
 
 

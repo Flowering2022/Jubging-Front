@@ -1,7 +1,18 @@
 package com.example.jubging;
 
+import android.content.Intent;
+import android.provider.ContactsContract;
+
+import java.sql.Time;
+import java.util.HashMap;
+
 import retrofit2.Call;
+import retrofit2.http.Body;
+import retrofit2.http.Field;
+import retrofit2.http.FieldMap;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
 import retrofit2.http.Path;
 
 public interface RetrofitInterface {
@@ -13,5 +24,21 @@ public interface RetrofitInterface {
     @GET("plogging/{userid}")
     // 모든 유저의 id값만 받아오는 메서드(id 중복체크를 위해)
     Call<DataClass> getName(@Path("userid") String userid);
+
+    @POST("plogging/")
+    Call<DataClass_Post> postName(@Body DataClass_Post post);
+
+
+//    @POST("/plogging/")
+//    Call<DataClass_Post> postData(@Body HashMap<String, Object> param);
+
+//    @FormUrlEncoded
+//    @POST("plogging/")
+//    Call<DataClass_Post> postNameField(
+//            @Body("userId") int userid,
+//            @Field("distance") int distance,
+//            @Field("date") String runningtime
+//    );
+
 
 }
