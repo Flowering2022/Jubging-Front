@@ -1,5 +1,7 @@
 package com.example.jubging;
 
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -15,4 +17,8 @@ public interface RetrofitInterface {
     @GET("plogging/{userid}")
     // 모든 유저의 id값만 받아오는 메서드(id 중복체크를 위해)
     Call<DataClass> getName(@Path("userid") String userid);
+
+    @POST("plogging/")
+    Call<DataClass_Post> postName(@Body DataClass_Post post);
+
 }

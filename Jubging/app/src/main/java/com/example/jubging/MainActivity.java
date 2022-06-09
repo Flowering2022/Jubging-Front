@@ -59,6 +59,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -236,12 +237,37 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
         });
 
 
+
+
         btn_finish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 isRunning = true;
                 mapViewContainer.removeAllViews();
+
+//
+                //Post통신
+                DataClass_Post post = new DataClass_Post(1, intentdinstance, timestr);
+                Call<DataClass_Post> call2 = service.postName(post);
+
+                call2.enqueue(new Callback<DataClass_Post>(){
+                    @Override
+                    public void onResponse(Call<DataClass_Post> call2, Response<DataClass_Post> response){
+                        if(response.isSuccessful()){
+                            DataClass_Post result = response.body();
+                        }
+                        if (!response.isSuccessful()) {
+                            return;
+
+                        }
+
+                    }
+                    @Override
+                    public void onFailure(Call<DataClass_Post> call2, Throwable t){
+
+                    }
+                });
 
                 Intent intent = new Intent(getApplicationContext(), FinishActivity.class);
                 startActivity(intent);
@@ -261,7 +287,6 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
             @Override
             public void onClick(View view) {
                 try {
-
                     mapView.removeAllPOIItems();
                     trackingMarker.setCustomImageResourceId(R.drawable.userimg); // 마커 이미지.
                     mapView.addPOIItem(trackingMarker);
@@ -283,7 +308,7 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
 
 
                         // 현재 위치에서 부터 1.5km거리 안에 있는 마커만 표시하기
-                        if(distanceKiloMeter < 1.5) {
+                        if(distanceKiloMeter < 4) {
                             MapPoint tempmapPoint = MapPoint.mapPointWithGeoCoord(latitude, longitude);
                             marker[i] = new MapPOIItem();
                             marker[i].setTag(100);
@@ -486,7 +511,7 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
         dist = rad2deg(dist);
         dist = dist * 60 * 1.1515;
 
-        if (unit == "kilometer") {
+        if (unit.equals("kilometer")) {
             dist = dist * 1.609344;
         } else if(unit == "meter"){
             dist = dist * 1609.344;
@@ -675,12 +700,7 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
     @Override
     public void onMapViewDragStarted(MapView mapView, MapPoint mapPoint) {
 
-        mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOff);
 
-        mapView.setShowCurrentLocationMarker(false);
-
-        current_latitude = mapView.getMapCenterPoint().getMapPointGeoCoord().latitude;
-        current_longitude = mapView.getMapCenterPoint().getMapPointGeoCoord().longitude;
 
     }
 
@@ -691,7 +711,12 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
 
     @Override
     public void onMapViewMoveFinished(MapView mapView, MapPoint mapPoint) {
+        mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOff);
 
+        mapView.setShowCurrentLocationMarker(false);
+
+        current_latitude = mapView.getMapCenterPoint().getMapPointGeoCoord().latitude;
+        current_longitude = mapView.getMapCenterPoint().getMapPointGeoCoord().longitude;
     }
 
 
