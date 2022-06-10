@@ -12,40 +12,193 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+
         <ImageButton
             android:id="@+id/trc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
             android:layout_marginEnd="16dp"
+            android:layout_marginBottom="476dp"
             android:background="#00FFFFFF"
             android:src="@drawable/currentlocationw"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintBottom_toTopOf="@+id/btn_pause"
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <ImageButton
             android:id="@+id/location_Btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="56dp"
+            android:layout_marginTop="48dp"
             android:layout_marginEnd="16dp"
             android:background="#00FFFFFF"
             android:src="@drawable/cleanhousew"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/trc" />
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <ToggleButton
-            android:id="@+id/plogging_btn"
+        <ImageButton
+            android:id="@+id/btn_pause"
             android:layout_width="70dp"
             android:layout_height="70dp"
+            android:src="@drawable/start"
+            android:background="#00FFFFFF"
             android:layout_marginEnd="16dp"
-            android:layout_marginBottom="40dp"
-            android:background="@drawable/plogging_btn"
-            android:textOff=""
-            android:textOn=""
+            android:layout_marginBottom="70dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <SlidingDrawer
+        android:id="@+id/slidingdrawer"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:layout_alignParentBottom="true"
+        android:allowSingleTap="true"
+        android:bottomOffset="-10dp"
+        android:content="@+id/exercise_content"
+        android:handle="@+id/exercise_handle"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!--슬라이딩 화면의 handle-->
+        <!--클릭 또는 눌러서 올리거나 내리면 슬라이딩 화면이 움직임-->
+
+        <Button
+            android:id="@+id/exercise_handle"
+            android:layout_width="300dp"
+            android:layout_height="30dp"
+            android:background="@drawable/finish_btn"
+            android:text="운동기록보기"
+            android:textSize="10sp"
+            android:fontFamily="@font/gmarketm"
+            tools:visibility="gone" />
+        <!--        </LinearLayout>-->
+
+        <!--슬라이딩 화면이 올라갔을 때 등장하는 화면-->
+        <LinearLayout
+            android:id="@+id/exercise_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#E6ffffff"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/time_km_fast_view"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="2"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/time_view"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/runtime"
+                        android:fontFamily="@font/gmarketm"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="4"
+                        android:gravity="center"
+                        android:text="0:0"
+                        android:textSize="30sp"
+                        android:textAlignment="center"/>
+
+                    <TextView
+                        android:id="@+id/time_text"
+                        android:fontFamily="@font/gmarketl"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="시간" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/km_view"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/km"
+                        android:fontFamily="@font/gmarketm"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="4"
+                        android:gravity="center"
+                        android:text="0m"
+                        android:textAlignment="center"
+                        android:textSize="30sp" />
+
+                    <TextView
+                        android:id="@+id/km_text"
+                        android:fontFamily="@font/gmarketl"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="미터" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/fast_view"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/fast"
+                        android:fontFamily="@font/gmarketm"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="4"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textSize="30sp" />
+
+                    <TextView
+                        android:id="@+id/fast_text"
+                        android:fontFamily="@font/gmarketl"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="속력" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/finish_view"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:gravity="center"
+                android:layout_weight="1">
+
+                <Button
+                    android:id="@+id/btn_finish"
+                    android:fontFamily="@font/gmarketm"
+                    android:layout_width="300dp"
+                    android:layout_height="36dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/finish_btn"
+                    android:gravity="center"
+                    android:text="플로깅 완료하기"
+                    android:visibility="invisible" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </SlidingDrawer>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -19,9 +18,7 @@ import android.os.Bundle;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import android.os.Handler;
 import android.os.Looper;
-import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,7 +47,6 @@ import net.daum.mf.map.api.MapPOIItem;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -58,8 +54,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Date;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -68,11 +62,9 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 
-public class MainActivity extends AppCompatActivity implements MapView.CurrentLocationEventListener, MapView.MapViewEventListener, MapView.POIItemEventListener
-{
-    public static Context context_main;
+public class FinishActivity extends AppCompatActivity implements MapView.CurrentLocationEventListener, MapView.MapViewEventListener, MapView.POIItemEventListener {
 
-    private static final String LOG_TAG = "MainActivity";
+    private static final String LOG_TAG = "FinishActivity";
     private static final int PRIORITY_HIGH_ACCURACY = LocationRequest.PRIORITY_HIGH_ACCURACY;
     private MapView mapView;
     private ViewGroup mapViewContainer;
@@ -90,26 +82,22 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
     private double mLongitude;
     private  double totalDistance=0;
     MapPolyline polyline;
-    private int startTime=0;
-    private int recentTime=0;
-    private boolean ploggingStart=false;
-
-    private TextView time, plodistance, plospeed;
-    private Thread timeThread = null;
-
-    private Boolean isRunning = true;
-    String timestr = "";
-    int intentdinstance;
-    String intentspeed = "";
+    String endtime = "";
+    String totalspeed = "";
+    int totaldistance;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_finish);
 
-        context_main = this;
+
+        endtime = ((MainActivity)MainActivity.context_main).timestr;
+        totalspeed = ((MainActivity)MainActivity.context_main).intentspeed;
+        totaldistance = ((MainActivity)MainActivity.context_main).intentdinstance;
 
         //지도를 띄우자
         // java code
@@ -120,62 +108,6 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
         mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeading);
         mapView.setCustomCurrentLocationMarkerTrackingImage(R.drawable.blank, new MapPOIItem.ImageOffset(16, 16));
 
-        // 시간 TextView
-        time = (TextView)findViewById(R.id.runtime);
-        // 거리 TextView
-        plodistance = (TextView)findViewById(R.id.km);
-        // 속력 TextView
-        plospeed= (TextView)findViewById(R.id.fast);
-
-
-        @SuppressLint("HandlerLeak")
-        Handler handler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                int mSec = msg.arg1 % 100;
-                int sec = (msg.arg1 / 100) % 60;
-                int min = (msg.arg1 / 100) / 60;
-                int hour = (msg.arg1 / 100) / 360;
-                //1000이 1초 1000*60 은 1분 1000*60*10은 10분 1000*60*60은 한시간
-
-                @SuppressLint("DefaultLocale") String result = String.format("%02d:%02d", min, sec);
-                if (result.equals("00:01:15:00")) {
-                    Toast.makeText(MainActivity.this, "1분 15초가 지났습니다.", Toast.LENGTH_SHORT).show();
-                }
-                time.setText(result);
-                timestr = result;
-            }
-        };
-
-        class timeThread implements Runnable {
-            @Override
-            public void run() {
-                int i = 0;
-
-                while (true) {
-                    while (isRunning) { //일시정지를 누르면 멈춤
-                        Message msg = new Message();
-                        msg.arg1 = i++;
-                        handler.sendMessage(msg);
-
-                        try {
-                            Thread.sleep(10);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                            runOnUiThread(new Runnable(){
-                                @Override
-                                public void run() {
-                                    time.setText("");
-                                    time.setText("00:00");
-                                }
-                            });
-                            return; // 인터럽트 받을 경우 return
-                        }
-                    }
-                }
-            }
-        }
-
         trackingMarker= new MapPOIItem();
         if (!checkLocationServicesStatus()) {
             showDialogForLocationServiceSetting();
@@ -183,22 +115,19 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
             checkRunTimePermission();
         }
 
+        final TextView showtime = (TextView)findViewById(R.id.endtime);
+        showtime.setText(endtime);
 
-        final ImageButton btn = (ImageButton) findViewById(R.id.trc);
-        btn.bringToFront();
+        final TextView showdistance = (TextView)findViewById(R.id.km);
+        showdistance.setText(totaldistance+"m");
 
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                MapPointBounds mapPointBounds = new MapPointBounds();
-                MapPoint mapPoint = MapPoint.mapPointWithGeoCoord(mLatitude, mLongitude);
-                mapPointBounds.add(mapPoint);
-                mapView.moveCamera(CameraUpdateFactory.newMapPointBounds(mapPointBounds));
+        final TextView showspeed = (TextView)findViewById(R.id.fast);
+        showspeed.setText(totalspeed+"m/h");
 
-            }
-        });
 
         //서버 연결헤서 데이터 가져오기
+        //Retrofit 인스턴스 생성
+//서버 연결헤서 데이터 가져오기
         //Retrofit 인스턴스 생성
         retrofit2.Retrofit retrofit = new retrofit2.Retrofit.Builder()
                 .baseUrl("http://ec2-52-79-240-128.ap-northeast-2.compute.amazonaws.com/") //baseUrl
@@ -209,84 +138,58 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
 
         final Button btn_finish = findViewById(R.id.btn_finish); //전송 버튼
 
-        //운동 시작
-        final ImageButton btn_pause = findViewById(R.id.btn_pause);
-        btn_pause.bringToFront();
-        final TextView time = (TextView)findViewById(R.id.runtime);
-        final TextView distan = (TextView)findViewById(R.id.km);
 
+        final ImageButton btn_pause = findViewById(R.id.restart);
 
         btn_pause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                btn_pause.setVisibility(View.INVISIBLE); //시작버튼 누르면 시작버튼 없애기
-                btn_finish.setVisibility(View.VISIBLE); //운동완료 버튼 보이기
-                btn_finish.setEnabled(true); //운동완료버튼 활성화
-                btn_finish.setText("플로깅 완료하기"); //버튼 내 택스트 변경
-
-                if(!ploggingStart){
-                    ploggingStart=true;
-                    startTime= (int) System.currentTimeMillis();
-
-                }
 
 
-                timeThread = new Thread(new timeThread());
-                timeThread.start();
-            }
-        });
-
-
-
-
-        btn_finish.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                isRunning = true;
                 mapViewContainer.removeAllViews();
 
-//
-                //Post통신
-                DataClass_Post post = new DataClass_Post(1, intentdinstance, timestr);
-                Call<DataClass_Post> call2 = service.postName(post);
-
-                call2.enqueue(new Callback<DataClass_Post>(){
-                    @Override
-                    public void onResponse(Call<DataClass_Post> call2, Response<DataClass_Post> response){
-                        if(response.isSuccessful()){
-                            DataClass_Post result = response.body();
-                        }
-                        if (!response.isSuccessful()) {
-                            return;
-
-                        }
-
-                    }
-                    @Override
-                    public void onFailure(Call<DataClass_Post> call2, Throwable t){
-
-                    }
-                });
-
-                Intent intent = new Intent(getApplicationContext(), FinishActivity.class);
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);
+            }
+        });
+        //서버 주소/1 전달
+        Call<DataClass> call = service.getName("1");
 
-                if(ploggingStart){
-                    ploggingStart=false;
-                    mapView.removeAllPolylines();
-                    mapView.removePOIItem(trackingMarker);
+        call.enqueue(new Callback<DataClass>() {
+            @Override
+            public void onResponse(Call<DataClass> call, Response<DataClass> response) {
+                if (response.isSuccessful()) {
+                    DataClass result = response.body();
+
+                    //서버에서 응답방은 데이터를 TextView에 넣어준다.
+                    final TextView distance__sum = findViewById(R.id.distance);
+                    final TextView plogging_freq = findViewById(R.id.number);
+
+                    distance__sum.setText(result.distance__sum + "");
+                    plogging_freq.setText(result.plogging_freq + "");
+
+                } else {
+                    //실패
                 }
+            }
 
+            @Override
+            public void onFailure(Call<DataClass> call, Throwable t) {
+                //통신 실패
             }
         });
 
-        final ImageButton button = (ImageButton) findViewById(R.id.location_Btn);
+
+
+
+
+        final ImageButton button = (ImageButton) findViewById(R.id.location_btn);
         button.bringToFront();
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 try {
+
                     mapView.removeAllPOIItems();
                     trackingMarker.setCustomImageResourceId(R.drawable.userimg); // 마커 이미지.
                     mapView.addPOIItem(trackingMarker);
@@ -304,11 +207,11 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
                         String location = obj.getString("location");
 
                         double distanceKiloMeter =
-                                distance(latitude, longitude, current_latitude, current_longitude, "kilometer");
+                                distance(latitude, longitude, mLatitude, mLongitude, "kilometer");
 
 
                         // 현재 위치에서 부터 1.5km거리 안에 있는 마커만 표시하기
-                        if(distanceKiloMeter < 4) {
+                        if(distanceKiloMeter < 0.5) {
                             MapPoint tempmapPoint = MapPoint.mapPointWithGeoCoord(latitude, longitude);
                             marker[i] = new MapPOIItem();
                             marker[i].setTag(100);
@@ -381,6 +284,7 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
                 mapView.setPOIItemEventListener(this);
 
 
+
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -404,9 +308,6 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
             }
         }).start();
 
-        polyline = new MapPolyline();
-        polyline.setTag(1000);
-        polyline.setLineColor(Color.argb(255, 255, 51, 0)); // Polyline 컬러 지정.
 
         CancellationTokenSource cts = new CancellationTokenSource();
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -442,57 +343,26 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
                     return;
                 }
                 Location location = locationResult.getLastLocation();
-                if(ploggingStart){
-                    recentTime= (int) System.currentTimeMillis();
-                    polyline.addPoint(MapPoint.mapPointWithGeoCoord(location.getLatitude(), location.getLongitude()));
-                    mapView.addPolyline(polyline);
-                    if(mLatitude != 0 && mLongitude != 0){
-                        totalDistance+= distance(mLatitude,mLongitude,location.getLatitude(),location.getLongitude(),"meter");
-                    }
+                if(mLatitude != 0 && mLongitude != 0){
+                    totalDistance+= distance(mLatitude,mLongitude,location.getLatitude(),location.getLongitude(),"meter");
                 }
-
-
                 mLatitude=location.getLatitude();
                 mLongitude=location.getLongitude();
                 Log.d("구글", "onLocationResult 위도: "+mLatitude);
                 Log.d("구글", "onLocationResult 경도: "+mLongitude);
                 Log.d("구글", "onLocationResult 거리: "+totalDistance);
-                Log.d("구글", "onLocationResult 시작 시간: "+new Date(startTime));
-                Log.d("구글", "onLocationResult 최근 시간: "+new Date(recentTime));
-                Log.d("구글", "onLocationResult 시간: "+(recentTime-startTime)/1000/3600+"h"+(recentTime-startTime)/1000/60%60+"m"+(recentTime-startTime)/1000%60+"s");
-                Log.d("구글", "onLocationResult 속력: "+totalDistance/((recentTime-startTime)/1000)+"m/h");
-
-                double tempspeed = (totalDistance)/(((recentTime) -startTime)/1000);
-
-                if(Double.isNaN(tempspeed)){
-                    tempspeed = 0.001;
-                }
-
-                String speed = String.format("%.1f", tempspeed);
-
-                Log.d("구글", "tempspeed: "+tempspeed);
-
-
-                intentdinstance = (int)totalDistance;
-                intentspeed = speed;
-
-                plodistance.setText(((int)totalDistance)+"m");
-                plospeed.setText(speed+"m/h");
-
                 // Log.d("구글", "onLocationResult: "+location.);
                 mapView.removePOIItem(trackingMarker);
-                trackingMarker.setItemName("현재 위치");
+                trackingMarker.setItemName("trackinMarker");
                 trackingMarker.setTag(0);
                 trackingMarker.setMapPoint(MapPoint.mapPointWithGeoCoord(mLatitude,mLongitude));
                 trackingMarker.setMarkerType(MapPOIItem.MarkerType.CustomImage);// 마커타입을 커스텀 마커로 지정.
                 trackingMarker.setCustomImageResourceId(R.drawable.userimg); // 마커 이미지.
                 mapView.addPOIItem(trackingMarker);
-
+                // Polyline 좌표 지정.
             }
         };
-
         //fusedLocationClient.requestLocationUpdates(locationRequest, mLocationCallback, Looper.myLooper());
-
 
 
     }
@@ -510,7 +380,7 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
         dist = rad2deg(dist);
         dist = dist * 60 * 1.1515;
 
-        if (unit.equals("kilometer")) {
+        if (unit == "kilometer") {
             dist = dist * 1.609344;
         } else if(unit == "meter"){
             dist = dist * 1609.344;
@@ -591,7 +461,7 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
 
         //런타임 퍼미션 처리
         // 1. 위치 퍼미션을 가지고 있는지 체크합니다.
-        int hasFineLocationPermission = ContextCompat.checkSelfPermission(MainActivity.this,
+        int hasFineLocationPermission = ContextCompat.checkSelfPermission(FinishActivity.this,
                 Manifest.permission.ACCESS_FINE_LOCATION);
 
         if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED) {
@@ -601,16 +471,16 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
 
         } else {  //2. 퍼미션 요청을 허용한 적이 없다면 퍼미션 요청이 필요합니다. 2가지 경우(3-1, 4-1)가 있습니다.
             // 3-1. 사용자가 퍼미션 거부를 한 적이 있는 경우에는
-            if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, REQUIRED_PERMISSIONS[0])) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(FinishActivity.this, REQUIRED_PERMISSIONS[0])) {
                 // 3-2. 요청을 진행하기 전에 사용자가에게 퍼미션이 필요한 이유를 설명해줄 필요가 있습니다.
-                Toast.makeText(MainActivity.this, "이 앱을 실행하려면 위치 접근 권한이 필요합니다.", Toast.LENGTH_LONG).show();
+                Toast.makeText(FinishActivity.this, "이 앱을 실행하려면 위치 접근 권한이 필요합니다.", Toast.LENGTH_LONG).show();
                 // 3-3. 사용자게에 퍼미션 요청을 합니다. 요청 결과는 onRequestPermissionResult에서 수신됩니다.
-                ActivityCompat.requestPermissions(MainActivity.this, REQUIRED_PERMISSIONS,
+                ActivityCompat.requestPermissions(FinishActivity.this, REQUIRED_PERMISSIONS,
                         PERMISSIONS_REQUEST_CODE);
             } else {
                 // 4-1. 사용자가 퍼미션 거부를 한 적이 없는 경우에는 퍼미션 요청을 바로 합니다.
                 // 요청 결과는 onRequestPermissionResult에서 수신됩니다.
-                ActivityCompat.requestPermissions(MainActivity.this, REQUIRED_PERMISSIONS,
+                ActivityCompat.requestPermissions(FinishActivity.this, REQUIRED_PERMISSIONS,
                         PERMISSIONS_REQUEST_CODE);
             }
         }
@@ -619,7 +489,7 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
     //여기부터는 GPS 활성화를 위한 메소드들
     private void showDialogForLocationServiceSetting() {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(FinishActivity.this);
         builder.setTitle("위치 서비스 비활성화");
         builder.setMessage("앱을 사용하기 위해서는 위치 서비스가 필요합니다.\n"
                 + "위치 설정을 수정하시겠습니까?");
@@ -668,7 +538,6 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
 
     @Override
     public void onMapViewInitialized(MapView mapView) {
-        Log.d("TAG", "onMapViewInitialized: " + mapView.getPOIItems().length);
     }
 
     @Override
@@ -683,7 +552,6 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
 
     @Override
     public void onMapViewSingleTapped(MapView mapView, MapPoint mapPoint) {
-        Log.d("TAG", "onMapViewSingleTapped: " + mapView.getPOIItems().length);
     }
 
     @Override
@@ -701,7 +569,12 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
     @Override
     public void onMapViewDragStarted(MapView mapView, MapPoint mapPoint) {
 
+        mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOff);
 
+        mapView.setShowCurrentLocationMarker(false);
+
+        current_latitude = mapView.getMapCenterPoint().getMapPointGeoCoord().latitude;
+        current_longitude = mapView.getMapCenterPoint().getMapPointGeoCoord().longitude;
 
     }
 
@@ -712,12 +585,7 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
 
     @Override
     public void onMapViewMoveFinished(MapView mapView, MapPoint mapPoint) {
-        mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOff);
 
-        mapView.setShowCurrentLocationMarker(false);
-
-        current_latitude = mapView.getMapCenterPoint().getMapPointGeoCoord().latitude;
-        current_longitude = mapView.getMapCenterPoint().getMapPointGeoCoord().longitude;
     }
 
 
@@ -739,9 +607,4 @@ public class MainActivity extends AppCompatActivity implements MapView.CurrentLo
     public void onDraggablePOIItemMoved(MapView mapView, MapPOIItem mapPOIItem, MapPoint mapPoint) {
 
     }
-
-
-
 }
-
-
